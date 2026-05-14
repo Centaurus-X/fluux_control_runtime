@@ -1,0 +1,239 @@
+# -----------------------------------------------------------------------------
+# process_states_mapping_contract.yaml
+# -----------------------------------------------------------------------------
+# Status: v26 - produktiver Mapping-Vertrag (kein Platzhalter mehr).
+#
+# Dieser Vertrag liefert die realen Mapping-Entscheidungen fuer die
+# process_states-Sektion, abgeleitet aus der normativen Baseline in
+# config/___device_state_data.json. Jede Zeile in records entspricht einem
+# real vorhandenen process_state-Eintrag der Baseline.
+#
+# Aktivierung erfolgt bewusst und reviewfaehig ueber app_config.yaml:
+#   config_source:
+#     process_states_live_projection_enabled: true
+#     process_states_live_projection_mode: review_only | apply_resolved
+#     process_states_live_projection_apply_limit: <int>
+#     process_states_live_projection_allow_review_required: true|false
+#
+# Default bleibt konservativ deaktiviert. Der sichere Betriebsweg ist:
+#   1. review_only in einer Stage-Umgebung
+#   2. apply_resolved mit niedrigem Apply-Limit in produktiver Stage
+#   3. schrittweise Erhoehung des Apply-Limits nach Freigabe
+# -----------------------------------------------------------------------------
+
+schema_version: 1
+mapping_contract_ref: PSTATEMAP_CONTRACT_PRODUCTIVE_V1
+target_section: process_states
+mode: productive
+
+# Default-Policies fuer alle records, sofern nicht record-spezifisch ueberschrieben.
+defaults:
+  merge_policy: baseline_wins
+  rollback_policy: restore_previous_row
+  owner_context_ref: worker_process_state_management
+  requires_review: false
+
+allowed_merge_policies:
+  - baseline_wins
+  - projection_wins_on_empty_only
+  - explicit_field_merge
+  - review_only
+
+allowed_rollback_policies:
+  - restore_previous_row
+  - remove_new_row
+  - rebind_previous_mapping
+  - manual_rollback_required
+
+# -----------------------------------------------------------------------------
+# records
+# -----------------------------------------------------------------------------
+# Jeder Eintrag beschreibt die Mapping-Entscheidung fuer genau einen
+# process_state der Baseline. Die state_id und die fachliche Schluessel-
+# kombination (p_id, mode_id, mapping_id) sind aus der Baseline uebernommen.
+# -----------------------------------------------------------------------------
+
+records:
+  - state_id: 1
+    p_id: 1
+    mode_id: 2
+    mapping_id: 100
+    control_strategy_type: PID
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_0]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 2
+    p_id: 1
+    mode_id: 2
+    mapping_id: 200
+    control_strategy_type: null
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_0]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 3
+    p_id: 1
+    mode_id: 1
+    mapping_id: 220
+    control_strategy_type: null
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_0]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 4
+    p_id: 1
+    mode_id: 1
+    mapping_id: 230
+    control_strategy_type: null
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_0]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 5
+    p_id: 1
+    mode_id: 1
+    mapping_id: 280
+    control_strategy_type: null
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_0]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 9
+    p_id: 1
+    mode_id: 1
+    mapping_id: 220
+    control_strategy_type: null
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_1]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 10
+    p_id: 1
+    mode_id: 2
+    mapping_id: 240
+    control_strategy_type: null
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_1]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 11
+    p_id: 1
+    mode_id: 1
+    mapping_id: 200
+    control_strategy_type: null
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_1]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 12
+    p_id: 2
+    mode_id: 1
+    mapping_id: 250
+    control_strategy_type: null
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_2]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 13
+    p_id: 1
+    mode_id: 1
+    mapping_id: 260
+    control_strategy_type: null
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_2]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 14
+    p_id: 3
+    mode_id: 1
+    mapping_id: 100
+    control_strategy_type: control_method
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_3]
+    merge_policy: explicit_field_merge
+    rollback_policy: rebind_previous_mapping
+
+  - state_id: 15
+    p_id: 4
+    mode_id: 2
+    mapping_id: 210
+    control_strategy_type: control_method
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_4]
+    merge_policy: explicit_field_merge
+    rollback_policy: rebind_previous_mapping
+
+  - state_id: 16
+    p_id: 5
+    mode_id: 1
+    mapping_id: 220
+    control_strategy_type: control_method
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_5]
+    merge_policy: explicit_field_merge
+    rollback_policy: rebind_previous_mapping
+
+  - state_id: 17
+    p_id: 6
+    mode_id: 1
+    mapping_id: 270
+    control_strategy_type: control_method
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_6]
+    merge_policy: explicit_field_merge
+    rollback_policy: rebind_previous_mapping
+
+  - state_id: 18
+    p_id: 1
+    mode_id: 2
+    mapping_id: 100
+    control_strategy_type: PID
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_7]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 20
+    p_id: 1
+    mode_id: 1
+    mapping_id: 200
+    control_strategy_type: null
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_8]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+  - state_id: 21
+    p_id: 1
+    mode_id: 1
+    mapping_id: 100
+    control_strategy_type: PID
+    owner_context_ref: worker_process_state_management
+    worker_refs: [worker_automation_9]
+    merge_policy: baseline_wins
+    rollback_policy: restore_previous_row
+
+review_notes:
+  baseline_source: config/___device_state_data.json
+  baseline_section: process_states
+  record_count: 17
+  review_status: approved
+  approved_for_modes: [review_only, apply_resolved]
+  notes:
+    - Baseline enthaelt 17 process_states, alle sind hier abgebildet.
+    - Eintraege mit control_strategy_type control_method verwenden
+      explicit_field_merge, damit Parameteraenderungen kontrolliert in den
+      Runtime-State uebernommen werden.
+    - Per Default bleiben alle Live-Projection-Flags in app_config.yaml
+      deaktiviert. Aktivierung erfolgt nur ueber bewussten Stage-Rollout.

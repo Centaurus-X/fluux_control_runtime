@@ -1,0 +1,46 @@
+change_set_id: RCS_2026_0001
+bundle_ref: BUNDLE_86a51cfee69edd76
+compile_revision: REV_bundle_hash_01
+origin:
+  node_ref: fn-01
+  worker_ref: worker-a
+  owner_context_ref: LDC_REACTOR_A_MAIN
+  source_plane: worker_runtime
+  timestamp_utc: '2026-04-20T12:00:00Z'
+change_scope:
+  target_section: process_states
+  target_contract_mode: sidecar_change_set_delta_v1
+  consistency: local_strong
+  requires_compile_review: true
+changes:
+  - id: CHG_001
+    change_kind: process_state_parameter_update
+    classification: safe_reversible
+    target_section: process_states
+    target_ref: 18
+    source_ref: RULE_CONTROL_HEAT_PID
+    candidate_ref: PSTATECAND_0f4c2e4b2f37a4d9
+    mapping_decision_ref: PSTATEMAP_52c3d0c4d3a78210
+    payload:
+      parameters:
+        target_temp_c: 120.0
+    reversibility:
+      class: full
+      rollback_hint: restore_previous_row
+      placeholder_required: false
+  - id: CHG_002
+    change_kind: temporary_runtime_override
+    classification: runtime_local_only
+    target_section: process_states
+    target_ref: 18
+    source_ref: worker_hot_state
+    candidate_ref: PSTATECAND_0f4c2e4b2f37a4d9
+    mapping_decision_ref: PSTATEMAP_52c3d0c4d3a78210
+    payload:
+      override:
+        max_output_percent: 70.0
+      expires_in_s: 60
+    reversibility:
+      class: local_only
+      rollback_hint: remove_runtime_override
+      placeholder_required: false

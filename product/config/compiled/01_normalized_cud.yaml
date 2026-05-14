@@ -1,0 +1,481 @@
+assets:
+- asset_type: Actuator
+  id: ACTUATOR_COOL_VALVE_REACTOR_A
+  kind: actuator
+  name: Cooling Valve
+  parent_ref: CHAN_COOL_VALVE_AO_01
+- asset_type: Actuator
+  id: ACTUATOR_HEATER_REACTOR_A
+  kind: actuator
+  name: Heater
+  parent_ref: CHAN_HEATER_AO_01
+- asset_type: Channel
+  id: CHAN_COOL_VALVE_AO_01
+  kind: channel
+  name: Cooling Valve Output Channel
+  owner_context_hint: POC_WAGO_B
+  parent_ref: CTRL_WAGO_B
+- asset_type: Channel
+  id: CHAN_ESTOP_DI_01
+  kind: channel
+  name: Emergency Stop Input Channel
+  owner_context_hint: POC_WAGO_B
+  parent_ref: CTRL_WAGO_B
+- asset_type: Channel
+  id: CHAN_HEATER_AO_01
+  kind: channel
+  name: Heater Output Channel
+  owner_context_hint: POC_WAGO_A
+  parent_ref: CTRL_WAGO_A
+- asset_type: Channel
+  id: CHAN_PRESS_AI_01
+  kind: channel
+  name: Pressure Input Channel
+  owner_context_hint: POC_WAGO_A
+  parent_ref: CTRL_WAGO_A
+- asset_type: Channel
+  id: CHAN_TEMP_AI_01
+  kind: channel
+  name: Temperature Input Channel
+  owner_context_hint: POC_WAGO_A
+  parent_ref: CTRL_WAGO_A
+- asset_class: PLC
+  asset_type: Controller
+  id: CTRL_WAGO_A
+  kind: controller
+  name: WAGO Controller A
+  owner_context_hint: POC_WAGO_A
+  parent_ref: UNIT_REACTOR_A
+- asset_class: PLC
+  asset_type: Controller
+  id: CTRL_WAGO_B
+  kind: controller
+  name: WAGO Controller B
+  owner_context_hint: POC_WAGO_B
+  parent_ref: UNIT_REACTOR_A
+- asset_type: Line
+  id: LINE_SYNTH_01
+  kind: line
+  name: Synthesis Line 01
+  parent_ref: PLANT_MAIN
+- asset_type: Plant
+  id: PLANT_MAIN
+  kind: plant
+  name: Main Plant
+- asset_type: Sensor
+  id: SENSOR_ESTOP_REACTOR_A
+  kind: sensor
+  name: Emergency Stop Sensor
+  parent_ref: CHAN_ESTOP_DI_01
+- asset_type: Sensor
+  id: SENSOR_PRESS_REACTOR_A
+  kind: sensor
+  name: Reactor Pressure Sensor
+  parent_ref: CHAN_PRESS_AI_01
+- asset_type: Sensor
+  id: SENSOR_TEMP_REACTOR_A
+  kind: sensor
+  name: Reactor Temperature Sensor
+  parent_ref: CHAN_TEMP_AI_01
+- asset_type: Unit
+  id: UNIT_REACTOR_A
+  kind: unit
+  name: Reactor A
+  parent_ref: LINE_SYNTH_01
+canonical_id: CUD_DEMO_REACTOR_A
+domains:
+- fsm_refs:
+  - FSM_HEAT_LOOP
+  id: LDC_REACTOR_A_MAIN
+  name: Logical Domain Reactor A Main
+  parameter_set_refs:
+  - PS_REACTOR_HEAT_DEFAULT
+  physical_owner_context_refs:
+  - POC_WAGO_A
+  - POC_WAGO_B
+  rule_refs:
+  - RULE_CONTROL_HEAT_PID
+  - RULE_FSM_START
+  - RULE_GUARD_PRESSURE_HIGH
+  - RULE_NOTIFY_HEAT_READY
+  - RULE_SAFETY_ESTOP
+  - RULE_SEQUENCE_COOLING_SUPPORT
+  signal_refs:
+  - SIG_REACTOR_COOLING_VALVE_CV
+  - SIG_REACTOR_ESTOP
+  - SIG_REACTOR_HEATER_CV
+  - SIG_REACTOR_PRESS_PV
+  - SIG_REACTOR_TEMP_PV
+  - SIG_REACTOR_TEMP_SP
+  timer_refs:
+  - TMR_ESTOP_FAST
+  - TMR_SCAN_100MS
+fsm_sources:
+- id: FSM_HEAT_LOOP
+  states:
+  - IDLE
+  - RUNNING
+  - INTERLOCK
+  transitions:
+  - command: CMD_HEAT_START
+    from: IDLE
+    id: TR_START
+    to: RUNNING
+  - command: CMD_HEAT_STOP
+    from: RUNNING
+    id: TR_STOP
+    to: IDLE
+  - command: CMD_HEAT_RESET
+    from: INTERLOCK
+    id: TR_RESET
+    to: IDLE
+metadata:
+  authoring_scope: cud_only
+  description: Beispiel für einen generischen CUD-Datensatz mit zwei physischen Owner-Contexts
+    und einem logischen Domänenkontext.
+  deterministic_profile: stable_v1
+  name: Demo Reactor A
+  project_id: PRJ_DEMO_REACTOR
+owner_context_hints:
+  coordination_edges:
+  - edge_type: uses_physical_context
+    id: EDGE_LDC_TO_POC_A
+    source_ref: LDC_REACTOR_A_MAIN
+    target_ref: POC_WAGO_A
+  - edge_type: uses_physical_context
+    id: EDGE_LDC_TO_POC_B
+    source_ref: LDC_REACTOR_A_MAIN
+    target_ref: POC_WAGO_B
+  logical:
+  - domain_ref: LDC_REACTOR_A_MAIN
+    id: LDC_REACTOR_A_MAIN
+    mode: single_writer_commit
+  physical:
+  - asset_refs:
+    - CHAN_HEATER_AO_01
+    - CHAN_PRESS_AI_01
+    - CHAN_TEMP_AI_01
+    - CTRL_WAGO_A
+    capabilities:
+      egress: true
+      ingress: true
+    id: POC_WAGO_A
+    name: Physical Owner Context WAGO A
+    point_refs:
+    - POINT_HEATER_CV_RAW
+    - POINT_PRESS_PV_RAW
+    - POINT_TEMP_PV_RAW
+  - asset_refs:
+    - CHAN_COOL_VALVE_AO_01
+    - CHAN_ESTOP_DI_01
+    - CTRL_WAGO_B
+    capabilities:
+      egress: true
+      ingress: true
+    id: POC_WAGO_B
+    name: Physical Owner Context WAGO B
+    point_refs:
+    - POINT_COOLING_VALVE_CV_RAW
+    - POINT_ESTOP_RAW
+parameter_sets:
+- id: PS_REACTOR_HEAT_DEFAULT
+  parameters:
+    cooling_limit_percent: 100.0
+    heater_limit_percent: 100.0
+    max_pressure_bar: 8.0
+    temp_hysteresis_c: 1.0
+    temp_setpoint_c: 120.0
+placeholders:
+  advanced_control_methods:
+    PID_STD_01:
+      status: placeholder_only
+  plc_function_blocks:
+    future_block_set: []
+  recipe_orchestration:
+    future_recipe_sets: []
+  runtime_projection_extensions:
+    future_projection_targets: []
+points:
+- address:
+    address: 11
+    area: holding_register
+    endpoint: tcp://10.0.0.22:502
+    protocol: modbus_tcp
+    unit: 1
+  asset_ref: CHAN_COOL_VALVE_AO_01
+  codec:
+    eng_max: 100.0
+    eng_min: 0.0
+    raw_max: 10000
+    raw_min: 0
+    raw_type: uint16
+    scaling: linear
+    unit: percent
+  direction: egress
+  id: POINT_COOLING_VALVE_CV_RAW
+  owner_context_ref: POC_WAGO_B
+  point_type: analog_output
+  qos:
+    flush_period_ms: 100
+    retry_backoff_ms: 250
+- address:
+    address: 3
+    area: coil
+    endpoint: tcp://10.0.0.22:502
+    protocol: modbus_tcp
+    unit: 1
+  asset_ref: CHAN_ESTOP_DI_01
+  codec:
+    eng_type: bool
+    raw_type: bool
+  direction: ingress
+  id: POINT_ESTOP_RAW
+  owner_context_ref: POC_WAGO_B
+  point_type: digital_input
+  qos:
+    sample_period_ms: 50
+    stale_timeout_ms: 1000
+- address:
+    address: 10
+    area: holding_register
+    endpoint: tcp://10.0.0.21:502
+    protocol: modbus_tcp
+    unit: 1
+  asset_ref: CHAN_HEATER_AO_01
+  codec:
+    eng_max: 100.0
+    eng_min: 0.0
+    raw_max: 10000
+    raw_min: 0
+    raw_type: uint16
+    scaling: linear
+    unit: percent
+  direction: egress
+  id: POINT_HEATER_CV_RAW
+  owner_context_ref: POC_WAGO_A
+  point_type: analog_output
+  qos:
+    flush_period_ms: 100
+    retry_backoff_ms: 250
+- address:
+    address: 2
+    area: holding_register
+    endpoint: tcp://10.0.0.21:502
+    protocol: modbus_tcp
+    unit: 1
+  asset_ref: CHAN_PRESS_AI_01
+  codec:
+    eng_max: 16.0
+    eng_min: 0.0
+    raw_max: 65535
+    raw_min: 0
+    raw_type: uint16
+    scaling: linear
+    unit: bar
+  direction: ingress
+  id: POINT_PRESS_PV_RAW
+  owner_context_ref: POC_WAGO_A
+  point_type: analog_input
+  qos:
+    sample_period_ms: 100
+    stale_timeout_ms: 3000
+- address:
+    address: 1
+    area: holding_register
+    endpoint: tcp://10.0.0.21:502
+    protocol: modbus_tcp
+    unit: 1
+  asset_ref: CHAN_TEMP_AI_01
+  codec:
+    eng_max: 300.0
+    eng_min: 0.0
+    raw_max: 65535
+    raw_min: 0
+    raw_type: uint16
+    scaling: linear
+    unit: degC
+  direction: ingress
+  id: POINT_TEMP_PV_RAW
+  owner_context_ref: POC_WAGO_A
+  point_type: analog_input
+  qos:
+    sample_period_ms: 100
+    stale_timeout_ms: 3000
+relations:
+- id: REL_COOLING_ACTS
+  relation_type: actuates
+  source_ref: ACTUATOR_COOL_VALVE_REACTOR_A
+  target_ref: UNIT_REACTOR_A
+- id: REL_HEATER_ACTS
+  relation_type: actuates
+  source_ref: ACTUATOR_HEATER_REACTOR_A
+  target_ref: UNIT_REACTOR_A
+- id: REL_LINE_UNIT
+  relation_type: contains
+  source_ref: LINE_SYNTH_01
+  target_ref: UNIT_REACTOR_A
+- id: REL_PLANT_LINE
+  relation_type: contains
+  source_ref: PLANT_MAIN
+  target_ref: LINE_SYNTH_01
+- id: REL_PRESS_MEASURES
+  relation_type: measures
+  source_ref: SENSOR_PRESS_REACTOR_A
+  target_ref: UNIT_REACTOR_A
+- id: REL_TEMP_MEASURES
+  relation_type: measures
+  source_ref: SENSOR_TEMP_REACTOR_A
+  target_ref: UNIT_REACTOR_A
+- id: REL_UNIT_CTRL_A
+  relation_type: contains
+  source_ref: UNIT_REACTOR_A
+  target_ref: CTRL_WAGO_A
+- id: REL_UNIT_CTRL_B
+  relation_type: contains
+  source_ref: UNIT_REACTOR_A
+  target_ref: CTRL_WAGO_B
+rule_sources:
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_CONTROL_HEAT_PID
+  placeholders:
+    advanced_control_methods:
+      pid_profile_ref: PID_STD_01
+  priority: 700
+  stage: control
+  then:
+    compute:
+      inputs:
+      - SIG_REACTOR_TEMP_PV
+      - SIG_REACTOR_TEMP_SP
+      limits:
+        max: 100.0
+        min: 0.0
+      output_signal_ref: SIG_REACTOR_HEATER_CV
+      strategy: placeholder_pid
+  when:
+    all:
+    - fsm_ref: FSM_HEAT_LOOP
+      state_is: RUNNING
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_FSM_START
+  priority: 800
+  stage: fsm
+  then:
+    force_fsm_state:
+    - fsm_ref: FSM_HEAT_LOOP
+      state: RUNNING
+  when:
+    all:
+    - command_ref: CMD_HEAT_START
+    - fsm_ref: FSM_HEAT_LOOP
+      state_is: IDLE
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_GUARD_PRESSURE_HIGH
+  priority: 900
+  stage: guard
+  then:
+    deny_commands:
+    - CMD_HEAT_START
+  when:
+    all:
+    - op: greater_than
+      signal_ref: SIG_REACTOR_PRESS_PV
+      value: 8.0
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_NOTIFY_HEAT_READY
+  priority: 100
+  stage: notification
+  then:
+    emit:
+    - code: HEAT_READY
+      kind: notification
+  when:
+    all:
+    - op: greater_or_equal
+      signal_ref: SIG_REACTOR_TEMP_PV
+      value: 119.0
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_SAFETY_ESTOP
+  priority: 1000
+  stage: safety
+  then:
+    force_fsm_state:
+    - fsm_ref: FSM_HEAT_LOOP
+      state: INTERLOCK
+    set_signals:
+    - signal_ref: SIG_REACTOR_HEATER_CV
+      value: 0.0
+    - signal_ref: SIG_REACTOR_COOLING_VALVE_CV
+      value: 0.0
+  when:
+    all:
+    - op: equals
+      signal_ref: SIG_REACTOR_ESTOP
+      value: true
+- domain_ref: LDC_REACTOR_A_MAIN
+  else:
+    set_signals:
+    - signal_ref: SIG_REACTOR_COOLING_VALVE_CV
+      value: 0.0
+  id: RULE_SEQUENCE_COOLING_SUPPORT
+  priority: 600
+  stage: sequence
+  then:
+    set_signals:
+    - signal_ref: SIG_REACTOR_COOLING_VALVE_CV
+      value: 35.0
+  when:
+    all:
+    - op: greater_than
+      signal_ref: SIG_REACTOR_TEMP_PV
+      value: 125.0
+schema_version: '1.0'
+signals:
+- direction: egress
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: SIG_REACTOR_COOLING_VALVE_CV
+  initial_value: 0.0
+  point_ref: POINT_COOLING_VALVE_CV_RAW
+  signal_type: control_output
+- direction: ingress
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: SIG_REACTOR_ESTOP
+  point_ref: POINT_ESTOP_RAW
+  qos:
+    sample_period_ms: 50
+    stale_timeout_ms: 1000
+  signal_type: boolean
+- direction: egress
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: SIG_REACTOR_HEATER_CV
+  initial_value: 0.0
+  point_ref: POINT_HEATER_CV_RAW
+  signal_type: control_output
+- direction: ingress
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: SIG_REACTOR_PRESS_PV
+  point_ref: POINT_PRESS_PV_RAW
+  qos:
+    sample_period_ms: 100
+    stale_timeout_ms: 3000
+  signal_type: pressure
+- direction: ingress
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: SIG_REACTOR_TEMP_PV
+  point_ref: POINT_TEMP_PV_RAW
+  qos:
+    sample_period_ms: 100
+    stale_timeout_ms: 3000
+  signal_type: temperature
+- direction: internal
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: SIG_REACTOR_TEMP_SP
+  initial_value: 120.0
+  signal_type: temperature_setpoint
+timer_sources:
+- id: TMR_ESTOP_FAST
+  interval_ms: 50
+  timer_type: interval
+- id: TMR_SCAN_100MS
+  interval_ms: 100
+  timer_type: interval

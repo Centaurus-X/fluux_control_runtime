@@ -1,0 +1,3 @@
+compiler_engine smoke OK
+compile_out=/mnt/data/current_compiler_architecture_engine_current/examples/generated_compile_out
+decompile_out=/mnt/data/current_compiler_architecture_engine_current/examples/generated_decompile_out

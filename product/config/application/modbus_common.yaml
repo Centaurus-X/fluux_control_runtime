@@ -1,0 +1,6 @@
+# Modbus Configuration
+
+modbus:
+  master_port: 502  # Standard-Port für Modbus TCP
+  unit: 0x1         # Unit-ID für den Slave-Gerät
+  coilbase: 512     # Basisadresse für Coils (Holding Registers oder Coils)

@@ -1,0 +1,83 @@
+schema_version: 1
+
+registry_meta:
+  runtime_kernel_term: runtime_json_kernel
+  baseline_ref: projektstand_vertraege_und_querschnitte/source_inputs/final.zip::final/config/___device_state_data.json
+  sem_commit_authority: central
+  worker_hot_state_authority: local_single_writer
+
+section_registry:
+  controllers:
+    section_class: runtime_operational
+    authority_plane: control_plane
+    consistency: strong
+    source_layer: compile_projection
+    mutation_policy: compile_managed
+    activation_scope: affected_workers
+    compile_required: true
+    review_required: false
+    owner_fields:
+      - owner_context_ref
+      - domain_ref
+      - node_ref
+      - worker_ref
+      - owner_controller_ref
+
+  sensors:
+    section_class: runtime_operational
+    authority_plane: control_plane
+    consistency: strong
+    source_layer: compile_projection
+    mutation_policy: compile_managed
+    activation_scope: affected_workers
+    compile_required: true
+    review_required: false
+    owner_fields:
+      - owner_context_ref
+      - domain_ref
+      - node_ref
+      - worker_ref
+      - owner_controller_ref
+
+  process_states:
+    section_class: runtime_operational
+    authority_plane: control_plane
+    consistency: strong
+    source_layer: compile_projection
+    mutation_policy: compile_managed
+    activation_scope: affected_workers
+    compile_required: true
+    review_required: true
+    owner_fields:
+      - owner_context_ref
+      - domain_ref
+      - process_owner_worker_ref
+      - chunk_id
+      - revision_ref
+
+  local_node:
+    section_class: deployment_overlay
+    authority_plane: control_plane
+    consistency: strong
+    source_layer: deployment_overlay
+    mutation_policy: runtime_mutable
+    activation_scope: local_worker
+    compile_required: false
+    review_required: false
+    owner_fields:
+      - owner_context_ref
+      - node_ref
+
+future_sections:
+  runtime_topology:
+    authority_plane: control_plane
+    consistency: strong
+  chunk_registry:
+    authority_plane: control_plane
+    consistency: strong
+  event_routes:
+    authority_plane: control_plane
+    consistency: strong
+  event_payload_contracts:
+    authority_plane: control_plane
+    consistency: strong

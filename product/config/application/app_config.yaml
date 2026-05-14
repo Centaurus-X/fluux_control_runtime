@@ -1,0 +1,273 @@
+python:
+  pycache:
+    enabled: true
+    strategy: prefix
+    root_dir: /tmp
+    dir_name: sync_xserver_pycache
+    cleanup_project_cache_dirs: true
+    cleanup_roots:
+    - src
+config_version: 1
+active_profile: base
+contract_registry:
+  enabled: true
+  registry_path: contracts/contract_registry.yaml
+  strict: true
+logging:
+  system_logs:
+    enabled: true
+    level: INFO
+    directory: logs/system_logs
+    file_name: system.log
+    rotation:
+      enabled: true
+      when: midnight
+      interval: 1
+      backup_count: 14
+      utc: false
+    startup_cleanup:
+      enabled: true
+      recursive: false
+      patterns:
+      - '*.log'
+      - '*.log.*'
+      - '*.gz'
+      - '*.zip'
+base:
+  app:
+    node_id: fn-01
+    show_ascii: true
+    ascii:
+      blank_lines_before_each_art: 2
+      blank_lines_after_each_art: 1
+      sleep_s_default: 0.3
+      arts:
+      - name: ASCII_TEXT
+        indent: 2
+        palette: CYBER_TEXT_PALETTE
+      - name: ASCII_CYBER_PUNK
+        indent: 1
+        palette: CYBERPALM_PALETTE
+      - name: ASCII_CTRL
+        indent: 2
+        palette: null
+      - name: ASCII_PENGUIN
+        indent: 4
+        palette: null
+      - name: METRICS_LEGENDE
+        indent: 2
+        palette: null
+  executor:
+    max_workers: 40
+  worker_gateway:
+    enabled: false
+    loop_timeout_s: 0.25
+    mqtt_out_put_timeout_s: 0.5
+    max_payload_bytes: 262144
+    drop_unmapped_event_types: true
+    default_qos: 1
+    default_retain: false
+    topic_root_override: null
+    acl_enforcement: true
+    acl_default_policy: deny
+    dlq_enabled: true
+    dlq_max_size: 1000
+    metrics_log_interval_s: 60
+  proxy_worker_bridge:
+    enabled: true
+    contract_id: C27
+    worker_id: worker_fn_01
+    broker_host: 192.168.0.31
+    broker_port: 1883
+    secure_port: 8883
+    use_mqtts: true
+    ca_cert_file: config/ssl/certs/mqtt/emqx-root-ca.pem
+    client_cert_file: null
+    client_key_file: null
+    tls_ciphers: null
+    tls_allow_insecure: false
+    check_hostname: true
+    username: null
+    password: null
+    client_id: v34-worker-worker_fn_01
+    keepalive: 60
+    command_qos: 2
+    reply_qos: 1
+    presence_qos: 1
+    event_qos: 1
+    presence_interval_s: 30.0
+    loop_sleep_s: 0.1
+    auto_reply_enabled: true
+    emit_command_events: true
+    snapshot_enabled: true
+    max_payload_bytes: 262144
+    runtime_binding_enabled: true
+    runtime_event_target: thread_management
+    runtime_state_resource: proxy_runtime_command_state
+    runtime_command_binding_version: v34_preproduction_final_runtime
+  worker_runtime:
+    config_chunking_enabled: true
+    writer_sync_enabled: true
+    gre_integration_enabled: true
+    snapshot_freeze_enabled: true
+    state_version_enabled: true
+  config_source:
+    mode: cud_compiled
+    legacy_json_path: config/___device_state_data.json
+    cud_source_dir: config/cud/
+    compiled_cache_dir: config/compiled/
+    runtime_compile_enabled: false
+    compiler_python_paths:
+    - vendor/current_compiler_engine/code_compiler_engine
+    - ../source_inputs/extracted/_compiler/current_compiler_engine/code_compiler_engine
+    - current_compiler_engine/code_compiler_engine
+    reverse_compile_enabled: false
+    reverse_compile_output_dir: config/decompiled/
+    runtime_change_capture_enabled: false
+    runtime_change_capture_dir: config/runtime_change_sets/
+    next_legacy_projection_candidate: process_states
+    process_states_mapping_contract_id: C08
+    process_states_live_projection_enabled: false
+    process_states_live_projection_mode: disabled
+    process_states_live_projection_apply_limit: 0
+    process_states_live_projection_allow_review_required: false
+    control_methods_mapping_contract_id: C17
+    control_methods_live_projection_enabled: false
+    control_methods_live_projection_mode: disabled
+    control_methods_live_projection_apply_limit: 0
+    control_methods_live_projection_allow_review_required: false
+    event_envelope_enrichment_enabled: false
+    event_envelope_source_ref: sync_event_router
+    event_envelope_node_id: node_main
+  paths:
+    resolve_relative_to_project_root: true
+    device_state_json: config/___device_state_data.json
+    device_state_json_test: config/___device_state_data.variant_b.json
+  network:
+    local_mode: true
+    master:
+      ip: 192.168.0.26
+      protocol: mqtt
+      use_ipv6: false
+      port: 1883
+      local_ip_override: localhost
+    mqtt_client:
+      enabled: false
+      broker_ip: 192.168.0.31
+      broker_port: 8883
+      topic_root: xserver/v1
+      interface_role: worker
+      username: null
+      password: null
+      keepalive: 60
+      qos: 1
+      protocol_version: MQTTv311
+      transport: tcp
+      clean_session: true
+      reconnect_on_failure: true
+      reconnect_min_delay: 1
+      reconnect_max_delay: 30
+      recv_system_events: false
+      auto_probe_on_connect: true
+      auto_select_single_peer: true
+      connect_wait_timeout_s: 10.0
+      shutdown_join_timeout_s: 2.0
+      ssl:
+        enabled: true
+        cafile: config/ssl/certs/mqtt/emqx-root-ca.pem
+        capath: null
+        cadata: null
+        certfile: null
+        keyfile: null
+        password: null
+        minimum_tls_version: TLSv1_2
+        ciphers: null
+        allow_unverified: false
+        auto_allow_unverified_if_no_ca: false
+    env_export:
+      enabled: true
+      override_existing_env: true
+      mapping:
+        local_mode: LOCAL_MODE
+        master_ip: MASTER_IP
+        master_port: MASTER_PORT
+        broker_ip: MQTT_BROKER_IP
+        broker_port: MQTT_BROKER_PORT
+        protocol: MASTER_PROTOCOL
+        ipv6: MASTER_IPV6
+  worker_state:
+    run_time_mode: SYNC_CTX
+    persist_data: true
+  datastore:
+    bypass_device_state_load: true
+    device_state_load_enabled: false
+    device_state_source: main
+    start_datastore_runtime_thread_in_local_mode: true
+  thread_management:
+    num_automation: 12
+  event_router:
+    broker_threads: 2
+    router_threads_per_broker: 4
+  cpu_probe:
+    enabled: true
+    interval_s: 1.0
+    top_n: 12
+    min_pct: 0.1
+    history_max: 300
+    log_top: true
+  system:
+    init_sleep_s: 1.0
+    log_level_test: true
+  timing:
+    main_loop_sleep_s: 5.0
+    start_delays_s:
+      after_datastore: 2.4
+      after_event_broker_1: 0.3
+      after_event_broker_2: 0.3
+      after_thread_management: 0.5
+      after_process_state_management: 0.5
+      after_state_event_management: 0.5
+      after_transport_service: 0.5
+  shutdown:
+    nudge_queues:
+      enabled: true
+      repeats: 2
+      put_timeout_s: 0.1
+      stop_payloads:
+      - _type: __STOP__
+        _sentinel: true
+      - event_type: __STOP__
+        _sentinel: true
+      - null
+    join_timeout_s: 5.0
+    enforce_sigkill_timeout_s: 10.0
+    executor_shutdown_wait: true
+  env_overrides:
+    enabled: true
+    override_existing_env: false
+    values:
+      SEM_MASTER_SYNC_ENABLED: '0'
+      LOG_PROFILE: ''
+profiles:
+  unit_test:
+    app:
+      show_ascii: false
+    cpu_probe:
+      enabled: false
+    datastore:
+      bypass_device_state_load: false
+      device_state_load_enabled: true
+      device_state_source: test
+    timing:
+      main_loop_sleep_s: 0.2
+      start_delays_s:
+        after_datastore: 0.0
+        after_event_broker_1: 0.0
+        after_event_broker_2: 0.0
+        after_thread_management: 0.0
+        after_process_state_management: 0.0
+        after_state_event_management: 0.0
+        after_transport_service: 0.0
+    shutdown:
+      join_timeout_s: 1.0
+      enforce_sigkill_timeout_s: 3.0

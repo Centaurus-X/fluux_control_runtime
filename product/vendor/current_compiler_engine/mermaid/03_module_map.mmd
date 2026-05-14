@@ -1,0 +1,13 @@
+flowchart TD
+    A[application.compile_service] --> B[domain.cud_normalize]
+    A --> C[domain.validate]
+    A --> D[domain.owner_context]
+    A --> E[domain.compile_runtime_contracts]
+    F[application.decompile_service] --> G[domain.decompile_runtime_contracts]
+    E --> H[compiled_inventory]
+    E --> I[compiled_signal_catalog]
+    E --> J[compiled_io_bindings]
+    E --> K[compiled_rule_ir]
+    E --> L[runtime_shard_layout]
+    E --> M[runtime_manifest]
+    E --> N[runtime_control_state.boot]

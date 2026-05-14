@@ -1,0 +1,67 @@
+# v33 Runtime Command Binding Beispieloverlay
+base:
+  proxy_worker_bridge:
+    enabled: true
+    contract_id: C26
+    worker_id: worker_fn_01
+    broker_host: 192.168.0.31
+    broker_port: 1883
+    secure_port: 8883
+    use_mqtts: true
+    ca_cert_file: config/ssl/certs/mqtt/emqx-root-ca.pem
+    client_cert_file: null
+    client_key_file: null
+    tls_ciphers: null
+    tls_allow_insecure: false
+    check_hostname: true
+    username: null
+    password: null
+    client_id: v33-worker-worker_fn_01
+    keepalive: 60
+    command_qos: 2
+    reply_qos: 1
+    presence_qos: 1
+    event_qos: 1
+    presence_interval_s: 30.0
+    loop_sleep_s: 0.1
+    auto_reply_enabled: true
+    emit_command_events: true
+    snapshot_enabled: true
+    max_payload_bytes: 262144
+    runtime_binding_enabled: true
+    runtime_event_target: thread_management
+    runtime_state_resource: event_store
+  network:
+    mqtt_client:
+      enabled: false
+      broker_ip: 192.168.0.31
+      broker_port: 8883
+      topic_root: xserver/v1
+      interface_role: worker
+      username: null
+      password: null
+      keepalive: 60
+      qos: 1
+      protocol_version: MQTTv311
+      transport: tcp
+      clean_session: true
+      reconnect_on_failure: true
+      reconnect_min_delay: 1
+      reconnect_max_delay: 30
+      recv_system_events: false
+      auto_probe_on_connect: true
+      auto_select_single_peer: true
+      connect_wait_timeout_s: 10.0
+      shutdown_join_timeout_s: 2.0
+      ssl:
+        enabled: true
+        cafile: config/ssl/certs/mqtt/emqx-root-ca.pem
+        capath: null
+        cadata: null
+        certfile: null
+        keyfile: null
+        password: null
+        minimum_tls_version: TLSv1_2
+        ciphers: null
+        allow_unverified: false
+        auto_allow_unverified_if_no_ca: false

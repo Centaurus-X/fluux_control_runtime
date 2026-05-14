@@ -1,0 +1,17 @@
+change_set_id: RCS_DEMO_001
+bundle_ref: BUNDLE_PLACEHOLDER
+changes:
+  - id: CHG_001
+    change_kind: parameter_update
+    target_ref: SIG_REACTOR_TEMP_SP
+    classification: safe_reversible
+    payload:
+      new_value: 125.0
+    source_ref: SIG_REACTOR_TEMP_SP
+  - id: CHG_002
+    change_kind: runtime_only_override
+    target_ref: BND_SIG_REACTOR_HEATER_CV
+    classification: runtime_local_only
+    payload:
+      temporary_limit_percent: 70.0
+    source_ref: SIG_REACTOR_HEATER_CV

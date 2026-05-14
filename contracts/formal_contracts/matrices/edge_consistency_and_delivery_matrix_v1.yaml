@@ -1,0 +1,31 @@
+schema_version: 1
+
+message_classes:
+  - route: edge.control.prepare
+    consistency: strong
+    delivery: at_least_once
+    idempotency_required: true
+  - route: edge.control.activate
+    consistency: strong
+    delivery: at_least_once
+    idempotency_required: true
+  - route: edge.control.rollback
+    consistency: strong
+    delivery: at_least_once
+    idempotency_required: true
+  - route: edge.config.revision_advertise
+    consistency: eventual
+    delivery: at_least_once
+    idempotency_required: false
+  - route: edge.discovery.announce
+    consistency: eventual
+    delivery: best_effort
+    idempotency_required: false
+  - route: edge.telemetry.publish
+    consistency: eventual
+    delivery: best_effort
+    idempotency_required: false
+  - route: worker.state_read.query
+    consistency: causal
+    delivery: request_response
+    idempotency_required: false

@@ -1,0 +1,28 @@
+candidate_ref: PSTATECAND_0f4c2e4b2f37a4d9
+mapping_decision_ref: PSTATEMAP_52c3d0c4d3a78210
+mapping_mode: create_new_legacy_state
+state_id_strategy: reserve_new
+resolved_state_id: 18
+resolved_p_id: 1
+resolved_value_id: 1
+resolved_mode_id: 2
+resolved_mapping_id: 100
+resolved_sensor_ids:
+  - 1
+resolved_actuator_ids:
+  - 5
+parameters_strategy: explicit_field_merge
+resolved_parameters:
+  target_temp_c: 120.0
+control_strategy_strategy: placeholder_pid_to_pid_config
+resolved_control_strategy:
+  type: PID
+  pid_config_id: 1
+setpoint_source_strategy: leave_null
+resolved_setpoint_source: null
+merge_policy: projection_wins_on_empty_only
+rollback_policy: remove_new_row
+owner_context_ref: LDC_REACTOR_A_MAIN
+worker_refs:
+  - worker-a
+requires_review: false

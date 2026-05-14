@@ -1,0 +1,40 @@
+activation_modes:
+  disabled:
+    live_apply: false
+    mapping_contract_required: false
+    rollback_preview_required: false
+  review_only:
+    live_apply: false
+    mapping_contract_required: true
+    rollback_preview_required: false
+  apply_resolved:
+    live_apply: true
+    mapping_contract_required: true
+    rollback_preview_required: true
+merge_policies:
+  baseline_wins:
+    existing_rows_preserved: true
+    new_rows_allowed: true
+  projection_wins_on_empty_only:
+    existing_empty_fields_fillable: true
+    conflicting_fields_allowed: false
+  explicit_field_merge:
+    explicit_fields_fillable: true
+    conflicting_identity_allowed: false
+  review_only:
+    live_apply: false
+rollback_policies:
+  restore_previous_row:
+    previous_row_required: true
+  remove_new_row:
+    previous_row_required: false
+  rebind_previous_mapping:
+    previous_row_required: true
+  manual_rollback_required:
+    previous_row_required: optional
+hard_conflicts:
+  - conflicting_state_id_and_mapping_id
+  - conflicting_process_identity
+  - conflicting_sensor_binding
+  - conflicting_actuator_binding
+  - conflicting_control_strategy

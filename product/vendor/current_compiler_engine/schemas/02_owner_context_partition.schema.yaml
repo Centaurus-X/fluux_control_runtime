@@ -1,0 +1,52 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://example.local/schemas/owner_context_partition.schema.yaml
+title: Owner Context Partition
+type: object
+required:
+  - partition_id
+  - physical_owner_contexts
+  - logical_domain_contexts
+  - coordination_edges
+properties:
+  partition_id: {type: string}
+  source_cud_hash: {type: string}
+  physical_owner_contexts:
+    type: array
+    items:
+      type: object
+      required: [id, asset_refs, point_refs]
+      properties:
+        id: {type: string}
+        asset_refs: {type: array, items: {type: string}}
+        point_refs: {type: array, items: {type: string}}
+        capabilities: {type: object}
+      additionalProperties: true
+  logical_domain_contexts:
+    type: array
+    items:
+      type: object
+      required: [id, domain_ref, signal_refs, rule_refs]
+      properties:
+        id: {type: string}
+        domain_ref: {type: string}
+        signal_refs: {type: array, items: {type: string}}
+        rule_refs: {type: array, items: {type: string}}
+        parameter_set_refs: {type: array, items: {type: string}}
+        timer_refs: {type: array, items: {type: string}}
+        fsm_refs: {type: array, items: {type: string}}
+        physical_owner_context_refs: {type: array, items: {type: string}}
+      additionalProperties: true
+  coordination_edges:
+    type: array
+    items:
+      type: object
+      required: [id, source_ref, target_ref, edge_type]
+      properties:
+        id: {type: string}
+        source_ref: {type: string}
+        target_ref: {type: string}
+        edge_type: {type: string}
+      additionalProperties: true
+  ownership_index:
+    type: object
+additionalProperties: true

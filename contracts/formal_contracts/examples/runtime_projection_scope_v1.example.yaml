@@ -1,0 +1,32 @@
+projection_version: 1
+projection_scope_class: minimal_kernel_overlay_v1
+runtime_json_kernel_patch:
+  config_schema_version: 2
+  compile_projection_meta:
+    projection_version: 1
+    compile_revision: REV_deadbeef
+    bundle_ref: BUNDLE_deadbeef
+    projection_mode: overlay_onto_legacy_runtime_json_kernel
+    projected_kernel_sections:
+      - config_schema_version
+      - compile_projection_meta
+      - runtime_topology
+      - chunk_registry
+      - event_routes
+      - event_payload_contracts
+      - runtime_control_state_boot
+  runtime_topology:
+    layout_id: LAYOUT_01
+  chunk_registry:
+    schema_version: 1
+    layout_ref: LAYOUT_01
+    chunks: []
+  event_routes: {}
+  event_payload_contracts: {}
+  runtime_control_state_boot:
+    boot_state_id: BOOT_01
+activation:
+  mutation_class: compile_full
+  activation_class: affected_workers
+  requires_restart: false
+  requires_review: false

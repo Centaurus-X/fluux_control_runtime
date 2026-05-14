@@ -1,0 +1,108 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://example.local/schemas/compiled_rule_ir.schema.yaml
+title: Compiled Rule IR
+type: object
+required:
+  - ir_id
+  - source_cud_hash
+  - deterministic_profile
+  - hierarchy
+  - rule_sets
+  - rules
+  - read_write_index
+properties:
+  ir_id:
+    type: string
+  source_cud_hash:
+    type: string
+  deterministic_profile:
+    type: string
+  hierarchy:
+    type: array
+    items:
+      type: string
+      enum: [safety, guard, fsm, control, sequence, projection, notification]
+  rule_sets:
+    type: array
+    items:
+      type: object
+      required: [id, domain_ref, stage]
+      properties:
+        id: {type: string}
+        domain_ref: {type: string}
+        logical_owner_context_ref: {type: string}
+        stage:
+          type: string
+          enum: [safety, guard, fsm, control, sequence, projection, notification]
+        rule_refs:
+          type: array
+          items: {type: string}
+      additionalProperties: true
+  rules:
+    type: array
+    items:
+      type: object
+      required:
+        - id
+        - stage
+        - priority
+        - domain_ref
+        - logical_owner_context_ref
+        - effect_scope
+        - conflict_group
+        - activation
+        - read_set
+        - write_set
+        - normalized_when
+        - normalized_then
+        - execution_kind
+        - source_refs
+        - rule_hash
+        - deterministic_key
+      properties:
+        id: {type: string}
+        stage:
+          type: string
+          enum: [safety, guard, fsm, control, sequence, projection, notification]
+        priority: {type: integer}
+        domain_ref: {type: string}
+        logical_owner_context_ref: {type: string}
+        effect_scope:
+          type: string
+          enum: [logical_domain_local, physical_context_local, cross_physical_same_domain, cross_domain_placeholder]
+        conflict_group: {type: string}
+        activation:
+          type: object
+          properties:
+            enabled_by_default: {type: boolean}
+            runtime_flag_ref: {type: string}
+          additionalProperties: true
+        read_set:
+          type: array
+          items: {type: string}
+        write_set:
+          type: array
+          items: {type: string}
+        normalized_when: {}
+        normalized_then: {}
+        normalized_else: {}
+        execution_kind:
+          type: string
+          enum: [pure_set, compute, fsm_transition, deny, emit, schedule, projection, placeholder]
+        dependencies:
+          type: array
+          items: {type: string}
+        source_refs:
+          type: array
+          items: {type: string}
+        placeholders: {type: object}
+        rule_hash: {type: string}
+        deterministic_key: {type: string}
+      additionalProperties: true
+  read_write_index:
+    type: object
+  stage_order_index:
+    type: object
+  coordination_index:
+    type: object
+additionalProperties: true

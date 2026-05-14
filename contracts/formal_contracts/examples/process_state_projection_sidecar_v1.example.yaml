@@ -1,0 +1,66 @@
+version: 1
+target_section: process_states
+projection_strategy: sidecar_preprojection_v1
+projection_status: planned_not_applied
+requires_legacy_mapping_contract: true
+reverse_compile_contract_mode: runtime_contract_sidecar_change_set_v1
+next_activation_step: mapping_contract_review
+source_boot_state_ref: BOOT_7512efc3698d98b0
+records:
+  - candidate_ref: PSTATECAND_1234567890abcdef
+    source_domain_state_ref: LDSTATE_1234567890abcdef
+    target_section: process_states
+    projection_status: planned_not_applied
+    projection_strategy: sidecar_preprojection_v1
+    apply_policy: requires_legacy_mapping_contract
+    legacy_mapping_status: unresolved
+    domain_ref: LDC_REACTOR_A_MAIN
+    logical_owner_context_ref: LDC_REACTOR_A_MAIN
+    physical_owner_context_refs:
+      - POC_WAGO_A
+    worker_refs:
+      - worker-a
+    mode_hint: automatic
+    value_hint: activated
+    active_rule_refs:
+      - RULE_CONTROL_HEAT_PID
+      - RULE_FSM_START
+      - RULE_GUARD_PRESSURE_HIGH
+    active_signal_refs:
+      - SIG_REACTOR_TEMP_PV
+      - SIG_REACTOR_TEMP_SP
+      - SIG_REACTOR_HEATER_CV
+    active_timer_refs:
+      - TMR_SCAN_100MS
+    active_binding_refs:
+      - BND_SIG_REACTOR_HEATER_CV
+      - BND_SIG_REACTOR_TEMP_PV
+    control_strategy_hints:
+      - hint_ref: CMHINT_abcdef1234567890
+        rule_ref: RULE_CONTROL_HEAT_PID
+        strategy: placeholder_pid
+        output_signal_ref: SIG_REACTOR_HEATER_CV
+        pid_profile_ref: PID_PROFILE_PLACEHOLDER
+        inputs:
+          - SIG_REACTOR_TEMP_PV
+          - SIG_REACTOR_TEMP_SP
+        stage: control
+    legacy_mapping_hints:
+      state_id_hint: null
+      p_id_hint: null
+      value_id_hint: null
+      mode_id_hint: null
+      mapping_id_hint: null
+      sensor_ids_hint: []
+      actuator_ids_hint: []
+physical_owner_states:
+  - owner_context_ref: POC_WAGO_A
+    active_binding_refs:
+      - BND_SIG_REACTOR_HEATER_CV
+      - BND_SIG_REACTOR_TEMP_PV
+    active_point_refs:
+      - POINT_HEATER_CV_RAW
+      - POINT_TEMP_PV_RAW
+    source_boot_state_ref: BOOT_7512efc3698d98b0
+    worker_refs:
+      - worker-a

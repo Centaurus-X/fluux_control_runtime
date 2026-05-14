@@ -1,0 +1,63 @@
+schema_version: 1
+
+sections:
+  - name: modbus_functions
+    authority_plane: catalog_plane
+    consistency: strong
+    mutation_policy: readonly
+  - name: scaling_profiles
+    authority_plane: catalog_plane
+    consistency: strong
+    mutation_policy: readonly
+  - name: controllers
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: compile_managed
+  - name: sensors
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: compile_managed
+  - name: actuators
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: compile_managed
+  - name: processes
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: compile_managed
+  - name: process_states
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: compile_managed
+  - name: control_methods
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: compile_managed
+  - name: events
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: compile_managed
+  - name: dynamic_rule_engine
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: compile_managed
+  - name: local_node
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: runtime_mutable
+  - name: comm_profiles
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: review_required
+  - name: runtime_topology
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: compile_managed
+  - name: chunk_registry
+    authority_plane: control_plane
+    consistency: strong
+    mutation_policy: compile_managed
+  - name: edge_presence_cache
+    authority_plane: edge_plane
+    consistency: eventual
+    mutation_policy: runtime_generated

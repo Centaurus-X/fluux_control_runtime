@@ -1,0 +1,24 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://example.local/schemas/runtime_contract_bundle.schema.yaml
+title: Runtime Contract Bundle
+type: object
+required:
+  - bundle_id
+  - manifest
+  - compiled_inventory
+  - compiled_signal_catalog
+  - compiled_io_bindings
+  - compiled_rule_ir
+  - runtime_shard_layout
+  - runtime_control_state_boot
+properties:
+  bundle_id: {type: string}
+  manifest: {type: object}
+  compiled_inventory: {type: object}
+  compiled_signal_catalog: {type: object}
+  compiled_io_bindings: {type: object}
+  compiled_rule_ir: {type: object}
+  runtime_shard_layout: {type: object}
+  runtime_control_state_boot: {type: object}
+  decompile_backrefs: {type: object}
+additionalProperties: true

@@ -1,0 +1,44 @@
+transport_envelope:
+  transport_version: 1
+  type: event
+  message_id: MSG_01
+  correlation_id: CORR_01
+  causation_id: CAUSE_00
+  sequence_no: 44
+  timestamp: 1770000000.0
+  source: worker_gateway
+  source_node: fn-01
+  destination: xserver/v1/fn-01/edge/config/revision
+  api_route: edge.config.revision_advertise
+  target_roles:
+    - mqtt_proxy
+  broadcast: false
+  consistency: eventual
+  authority_plane: edge_plane
+  revision_ref: REV_2026_0001
+  distribution_epoch: EPOCH_01
+  vector_clock:
+    fn-01: 44
+  payload:
+    contract_version: 1
+    kind: event
+    resource: config
+    operation: revision_advertise
+    request_id: REQ_01
+    correlation_id: CORR_01
+    actor:
+      principal_id: system
+      roles: [worker]
+      scopes: [config:read]
+    sync:
+      desired_revision: REV_2026_0001
+    scope:
+      topology_ref: topo_a
+    meta:
+      mqtt:
+        qos: 1
+        retain: false
+      delivery_policy: at_least_once
+    body:
+      advertised_revision: REV_2026_0001
+      bundle_ref: BUNDLE_2026_0001

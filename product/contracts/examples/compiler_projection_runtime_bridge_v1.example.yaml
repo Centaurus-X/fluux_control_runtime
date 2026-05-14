@@ -1,0 +1,36 @@
+projection_version: 1
+
+compile_request:
+  source_mode: cud_file_set
+  source_files:
+    - config/cud/main.yaml
+  output_dir: config/compiled/
+
+compile_artifacts:
+  runtime_contract_bundle_ref: config/compiled/10_runtime_contract_bundle.yaml
+  runtime_manifest_ref: config/compiled/08_runtime_manifest.yaml
+  runtime_shard_layout_ref: config/compiled/07_runtime_shard_layout.yaml
+
+runtime_projection_bundle:
+  compile_revision: REV_2026_0001
+  bundle_ref: BUNDLE_2026_0001
+  manifest_ref: MANIFEST_2026_0001
+  rollback_ref: REV_2025_9999
+  runtime_json_kernel_patch:
+    controllers: []
+    sensors: []
+    actuators: []
+    process_states: []
+  runtime_topology_patch:
+    runtime_topology: {}
+    chunk_registry: {}
+  event_contract_patch:
+    event_routes: {}
+    event_payload_contracts: {}
+  affected_workers:
+    - worker.fn-01
+  activation:
+    mutation_class: compile_incremental
+    activation_class: affected_workers
+    requires_restart: false
+    requires_review: false

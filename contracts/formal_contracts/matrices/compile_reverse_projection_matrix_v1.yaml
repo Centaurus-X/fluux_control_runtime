@@ -1,0 +1,30 @@
+compile_direction:
+  source: cud
+  output: runtime_contract_bundle
+  projection: runtime_json_kernel_overlay
+  authority_plane: control_plane
+  consistency: strong
+
+reverse_compile_direction:
+  source:
+    - runtime_contract_bundle
+    - runtime_change_set
+    - process_state_projection_sidecar
+  output:
+    - cud_delta
+    - reconstructed_fragments
+    - review_package
+  authority_plane: control_plane
+  consistency: strong_for_release
+
+runtime_local_commit:
+  source: worker_single_writer
+  output: runtime_state_mutation
+  authority_plane: local_worker
+  consistency: local_strong
+
+future_distribution:
+  source: master_or_multi_master
+  output: distributed_config_replicas
+  consistency: eventual
+  note: not_for_local_hot_state_commit

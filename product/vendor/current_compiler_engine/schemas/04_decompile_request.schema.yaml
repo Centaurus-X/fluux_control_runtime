@@ -1,0 +1,17 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://example.local/schemas/decompile_request.schema.yaml
+title: Decompile Request
+type: object
+required: [request_id, runtime_contract_bundle_path, output_dir]
+properties:
+  request_id: {type: string}
+  runtime_contract_bundle_path: {type: string}
+  output_dir: {type: string}
+  options:
+    type: object
+    properties:
+      emit_cud_delta: {type: boolean}
+      emit_reconstructed_fragments: {type: boolean}
+      include_backrefs: {type: boolean}
+    additionalProperties: true
+additionalProperties: true

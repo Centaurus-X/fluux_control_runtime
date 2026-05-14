@@ -1,0 +1,51 @@
+projection_version: 1
+projection_scope_class: minimal_kernel_overlay_v1
+
+project_now:
+  - section: config_schema_version
+    source_layer: compile_projection
+  - section: compile_projection_meta
+    source_layer: compile_projection
+  - section: runtime_topology
+    source_layer: compile_projection
+  - section: chunk_registry
+    source_layer: compile_projection
+  - section: event_routes
+    source_layer: compile_projection
+  - section: event_payload_contracts
+    source_layer: compile_projection
+  - section: runtime_control_state_boot
+    source_layer: compile_projection
+
+prepare_now:
+  - section: process_states
+    preparation_mode: sidecar_preprojection_v1
+    source_artifacts:
+      - runtime_control_state_boot
+      - compiled_rule_ir
+    live_projection: false
+    blocker: legacy_id_mapping_and_merge_policy_missing
+
+project_later:
+  - section: control_methods
+    blocker: depends_on_process_states_mapping_contract
+  - section: events
+    blocker: legacy_vs_compiled_event_definition_alignment_missing
+  - section: triggers
+    blocker: legacy_vs_compiled_event_definition_alignment_missing
+  - section: actions
+    blocker: legacy_vs_compiled_event_definition_alignment_missing
+  - section: transitions
+    blocker: legacy_vs_compiled_event_definition_alignment_missing
+  - section: dynamic_rule_engine
+    blocker: merge_policy_not_frozen
+
+keep_baseline_or_deployment_driven:
+  - section: controllers
+    reason: physical_runtime_binding_and_overlay_policy_not_frozen
+  - section: sensors
+    reason: physical_runtime_binding_and_overlay_policy_not_frozen
+  - section: actuators
+    reason: physical_runtime_binding_and_overlay_policy_not_frozen
+  - section: comm_profiles
+    reason: deployment_overlay_and_edge_binding_not_split_enough

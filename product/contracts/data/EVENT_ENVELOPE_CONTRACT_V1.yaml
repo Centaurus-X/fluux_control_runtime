@@ -1,0 +1,45 @@
+schema_version: 1
+contract_id: C16
+data_contract_id: EVENT_ENVELOPE_CONTRACT_V1
+status: externalized_reference
+runtime_loaded: false
+code_source: product/src/libraries/_event_envelope.py
+formal_spec: product/contracts/formal/16_EVENT_ENVELOPE_VECTOR_CLOCK_CONTRACT_V1.md
+intent: Datenartige Referenz des Event-Envelope-Vertrags. Algorithmik, Vector-Clock-Operationen, Enrichment und Validierung bleiben im Code.
+constants:
+  envelope_schema_version: 1
+  allowed_message_kinds:
+    - intent
+    - command
+    - state
+    - telemetry
+    - result
+    - audit
+    - control
+    - unknown
+  allowed_trust_levels:
+    - internal
+    - authorized
+    - untrusted
+  required_keys:
+    - envelope_schema_version
+    - envelope_id
+    - message_kind
+    - source_ref
+    - sequence_no
+  optional_keys:
+    - causation_id
+    - correlation_id
+    - vector_clock
+    - trust_level
+    - priority
+    - revision_ref
+    - audit_required
+code_retained_behaviour:
+  - envelope_enrichment
+  - vector_clock_advance
+  - vector_clock_merge
+  - happens_before_check
+  - concurrency_check
+  - causation_defaulting
+  - lenient_and_strict_validation

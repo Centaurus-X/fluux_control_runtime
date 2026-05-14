@@ -1,0 +1,135 @@
+assets:
+- asset_type: Actuator
+  id: ACTUATOR_COOL_VALVE_REACTOR_A
+  kind: actuator
+  name: Cooling Valve
+  owner_context_ref: null
+  parent_ref: CHAN_COOL_VALVE_AO_01
+  source_ref: ACTUATOR_COOL_VALVE_REACTOR_A
+- asset_type: Actuator
+  id: ACTUATOR_HEATER_REACTOR_A
+  kind: actuator
+  name: Heater
+  owner_context_ref: null
+  parent_ref: CHAN_HEATER_AO_01
+  source_ref: ACTUATOR_HEATER_REACTOR_A
+- asset_type: Channel
+  id: CHAN_COOL_VALVE_AO_01
+  kind: channel
+  name: Cooling Valve Output Channel
+  owner_context_ref: POC_WAGO_B
+  parent_ref: CTRL_WAGO_B
+  source_ref: CHAN_COOL_VALVE_AO_01
+- asset_type: Channel
+  id: CHAN_ESTOP_DI_01
+  kind: channel
+  name: Emergency Stop Input Channel
+  owner_context_ref: POC_WAGO_B
+  parent_ref: CTRL_WAGO_B
+  source_ref: CHAN_ESTOP_DI_01
+- asset_type: Channel
+  id: CHAN_HEATER_AO_01
+  kind: channel
+  name: Heater Output Channel
+  owner_context_ref: POC_WAGO_A
+  parent_ref: CTRL_WAGO_A
+  source_ref: CHAN_HEATER_AO_01
+- asset_type: Channel
+  id: CHAN_PRESS_AI_01
+  kind: channel
+  name: Pressure Input Channel
+  owner_context_ref: POC_WAGO_A
+  parent_ref: CTRL_WAGO_A
+  source_ref: CHAN_PRESS_AI_01
+- asset_type: Channel
+  id: CHAN_TEMP_AI_01
+  kind: channel
+  name: Temperature Input Channel
+  owner_context_ref: POC_WAGO_A
+  parent_ref: CTRL_WAGO_A
+  source_ref: CHAN_TEMP_AI_01
+- asset_type: Controller
+  id: CTRL_WAGO_A
+  kind: controller
+  name: WAGO Controller A
+  owner_context_ref: POC_WAGO_A
+  parent_ref: UNIT_REACTOR_A
+  source_ref: CTRL_WAGO_A
+- asset_type: Controller
+  id: CTRL_WAGO_B
+  kind: controller
+  name: WAGO Controller B
+  owner_context_ref: POC_WAGO_B
+  parent_ref: UNIT_REACTOR_A
+  source_ref: CTRL_WAGO_B
+- asset_type: Line
+  id: LINE_SYNTH_01
+  kind: line
+  name: Synthesis Line 01
+  owner_context_ref: null
+  parent_ref: PLANT_MAIN
+  source_ref: LINE_SYNTH_01
+- asset_type: Plant
+  id: PLANT_MAIN
+  kind: plant
+  name: Main Plant
+  owner_context_ref: null
+  parent_ref: null
+  source_ref: PLANT_MAIN
+- asset_type: Sensor
+  id: SENSOR_ESTOP_REACTOR_A
+  kind: sensor
+  name: Emergency Stop Sensor
+  owner_context_ref: null
+  parent_ref: CHAN_ESTOP_DI_01
+  source_ref: SENSOR_ESTOP_REACTOR_A
+- asset_type: Sensor
+  id: SENSOR_PRESS_REACTOR_A
+  kind: sensor
+  name: Reactor Pressure Sensor
+  owner_context_ref: null
+  parent_ref: CHAN_PRESS_AI_01
+  source_ref: SENSOR_PRESS_REACTOR_A
+- asset_type: Sensor
+  id: SENSOR_TEMP_REACTOR_A
+  kind: sensor
+  name: Reactor Temperature Sensor
+  owner_context_ref: null
+  parent_ref: CHAN_TEMP_AI_01
+  source_ref: SENSOR_TEMP_REACTOR_A
+- asset_type: Unit
+  id: UNIT_REACTOR_A
+  kind: unit
+  name: Reactor A
+  owner_context_ref: null
+  parent_ref: LINE_SYNTH_01
+  source_ref: UNIT_REACTOR_A
+inventory_id: INV_68eece8f4c5c6dc3
+physical_owner_contexts:
+- asset_refs:
+  - CHAN_HEATER_AO_01
+  - CHAN_PRESS_AI_01
+  - CHAN_TEMP_AI_01
+  - CTRL_WAGO_A
+  capabilities:
+    egress: true
+    ingress: true
+  id: POC_WAGO_A
+  name: Physical Owner Context WAGO A
+  point_refs:
+  - POINT_HEATER_CV_RAW
+  - POINT_PRESS_PV_RAW
+  - POINT_TEMP_PV_RAW
+- asset_refs:
+  - CHAN_COOL_VALVE_AO_01
+  - CHAN_ESTOP_DI_01
+  - CTRL_WAGO_B
+  capabilities:
+    egress: true
+    ingress: true
+  id: POC_WAGO_B
+  name: Physical Owner Context WAGO B
+  point_refs:
+  - POINT_COOLING_VALVE_CV_RAW
+  - POINT_ESTOP_RAW
+source_cud_hash: 9bc912ab8c151381cac7847a6174e052b8a83a62c07658173380d46a4147c737

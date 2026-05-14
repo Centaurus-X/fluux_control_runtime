@@ -1,0 +1,16 @@
+flowchart TD
+    A[Canonical Universal Dataset] --> B[Normalize]
+    B --> C[Validate]
+    C --> D[Deterministic Sort]
+    D --> E[Owner Context Partition]
+    E --> F[compiled_inventory]
+    E --> G[compiled_signal_catalog]
+    E --> H[compiled_io_bindings]
+    E --> I[compiled_rule_ir]
+    E --> J[runtime_shard_layout]
+    F --> K[runtime_manifest]
+    G --> K
+    H --> K
+    I --> K
+    J --> K
+    K --> L[runtime_contract_bundle]

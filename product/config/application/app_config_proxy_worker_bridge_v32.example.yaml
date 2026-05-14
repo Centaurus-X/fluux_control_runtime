@@ -1,0 +1,31 @@
+# v32 Proxy Worker Bridge Beispieloverlay
+#
+# Dieses Overlay ist als Vorlage gedacht. Die bestehende app_config.yaml bleibt
+# die Baseline. Fuer Pre-Production kann dieser Block in base: uebernommen oder
+# per eurem Config-Merge-Prozess geladen werden.
+
+base:
+  proxy_worker_bridge:
+    enabled: true
+    contract_id: C25
+    worker_id: "worker_fn_01"
+    broker_host: "192.168.0.31"
+    broker_port: 1883
+    secure_port: 8883
+    use_mqtts: true
+    ca_cert_file: "config/ssl/certs/mqtt/emqx-root-ca.pem"
+    client_cert_file: null
+    client_key_file: null
+    tls_ciphers: null
+    tls_allow_insecure: false
+    check_hostname: true
+    username: null
+    password: null
+    client_id: "v33-worker-worker_fn_01"
+    command_qos: 2
+    reply_qos: 1
+    presence_qos: 1
+    event_qos: 1
+    auto_reply_enabled: true
+    emit_command_events: true
+    snapshot_enabled: true

@@ -1,0 +1,37 @@
+contract_id: C27
+name: Runtime Command Activation Binding Contract V1
+version: v1
+release_target: v34_preproduction_final_runtime
+status: active
+scope:
+  - proxy_worker_bridge_command_binding
+  - thread_management_runtime_command_handler
+  - safe_runtime_state_updates
+  - no_direct_fieldbus_io_write
+commands:
+  echo:
+    effect: technical_echo_reply
+  state_read:
+    effect: read_allowed_runtime_resource
+  runtime_snapshot:
+    effect: return_runtime_resource_summary
+  set_control_method:
+    effect: update_worker_state_control_method
+    direct_io_write: false
+  parameter_update:
+    effect: update_user_config_runtime_parameters
+    direct_io_write: false
+  safe_runtime_command:
+    effect: append_safe_runtime_command_queue
+    direct_io_write: false
+events:
+  command_event_type: V34_PROXY_RUNTIME_COMMAND_RECEIVED
+  legacy_event_types:
+    - V33_PROXY_WORKER_COMMAND_RECEIVED
+    - V32_PROXY_WORKER_COMMAND_RECEIVED
+routing:
+  target: thread_management
+  queue: queue_event_pc
+safety:
+  safe_direct_io_write: false
+  external_command_must_not_write_fieldbus_directly: true

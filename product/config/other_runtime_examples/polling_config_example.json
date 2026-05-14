@@ -1,0 +1,18 @@
+{
+  "comm_profiles": {
+    "modbus_wago_conservative": {
+      "poll_interval_s": 10.00,
+      "io_min_gap_s": 0.02,
+      "read_min_gap_s": 0.02,
+      "write_min_gap_s": 0.02,
+      "sensor_block_size": 16,
+      "batch_actuator_flush_on_sensor_cycle": true
+    }
+  },
+  "controllers_patch_example": [
+    {
+      "controller_id": 2,
+      "comm_profile": "modbus_wago_conservative"
+    }
+  ]
+}

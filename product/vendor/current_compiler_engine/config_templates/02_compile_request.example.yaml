@@ -1,0 +1,8 @@
+request_id: REQ_COMPILE_DEMO_001
+source_cud_path: ../examples/01_cud.example.yaml
+output_dir: ../examples/generated_compile_out
+options:
+  strict_validation: true
+  preserve_placeholders: true
+  build_backrefs: true
+  include_hashes: true

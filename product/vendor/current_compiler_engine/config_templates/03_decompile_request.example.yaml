@@ -1,0 +1,7 @@
+request_id: REQ_DECOMPILE_DEMO_001
+runtime_contract_bundle_path: ../examples/generated_compile_out/10_runtime_contract_bundle.yaml
+output_dir: ../examples/generated_decompile_out
+options:
+  emit_cud_delta: true
+  emit_reconstructed_fragments: true
+  include_backrefs: true

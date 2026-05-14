@@ -1,0 +1,46 @@
+mapping_rules:
+  - target_field: state_id
+    source: mapping_decision.resolved_state_id
+    strategy: explicit_only
+    required: true
+  - target_field: p_id
+    source: mapping_decision.resolved_p_id
+    strategy: explicit_only
+    required: true
+  - target_field: value_id
+    source: mapping_decision.resolved_value_id
+    strategy: explicit_only
+    required: true
+  - target_field: mode_id
+    source: mapping_decision.resolved_mode_id
+    strategy: explicit_only
+    required: true
+  - target_field: mapping_id
+    source: mapping_decision.resolved_mapping_id
+    strategy: explicit_only
+    required: true
+  - target_field: sensor_ids
+    source: mapping_decision.resolved_sensor_ids
+    strategy: explicit_only
+    required: true
+  - target_field: actuator_ids
+    source: mapping_decision.resolved_actuator_ids
+    strategy: explicit_only
+    required: true
+  - target_field: parameters
+    source: mapping_decision.resolved_parameters
+    strategy: explicit_field_merge
+    required: true
+  - target_field: control_strategy
+    source: mapping_decision.resolved_control_strategy
+    strategy: optional_if_valid
+    required: false
+  - target_field: setpoint_source
+    source: mapping_decision.resolved_setpoint_source
+    strategy: optional_if_valid
+    required: false
+review_triggers:
+  - conflicting_state_identity
+  - conflicting_io_binding
+  - incompatible_control_strategy
+  - unknown_foreign_key_reference

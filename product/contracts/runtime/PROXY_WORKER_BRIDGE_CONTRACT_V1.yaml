@@ -1,0 +1,74 @@
+schema_version: 1
+contract_id: C25
+contract_name: PROXY_WORKER_BRIDGE_CONTRACT_V1
+status: active_optional_runtime
+owner_component: product/src/core/proxy_worker_bridge.py
+purpose: Native v32 worker-side binding to the external MQTT/WebSocket Proxy Gateway v01.7.
+role_boundaries:
+  worker:
+    owns:
+      - local_runtime_truth
+      - local_command_acceptance
+      - local_event_source
+    must_not_own:
+      - proxy_user_registry
+      - global_acl_truth
+      - master_config_assignment_truth
+  proxy:
+    owns:
+      - websocket_client_sessions
+      - edge_acl_enforcement
+      - topic_routing
+    must_not_own:
+      - worker_hot_state_truth
+      - local_io_write_order
+communication:
+  transport: mqtt_or_mqtts_via_broker
+  broker_default_host: 192.168.0.31
+  mqtt_plain_port: 1883
+  mqtts_port: 8883
+  envelope_version: proxy-envelope-v1
+topics:
+  proxy_to_worker_command: worker/{worker_id}/command/{domain}
+  worker_to_proxy_reply: worker/{worker_id}/reply/{client_id}
+  worker_to_proxy_event: worker/{worker_id}/event/{domain}
+  worker_to_proxy_presence: worker/{worker_id}/presence
+  worker_to_proxy_snapshot: worker/{worker_id}/snapshot/{domain}
+qos_policy:
+  command: 2
+  reply: 1
+  event: 1
+  presence: 1
+  snapshot: 1
+presence:
+  retain: true
+  interval_s_default: 30
+commands:
+  accepted_domains:
+    - runtime
+    - snapshot
+  command_event_emit: V32_PROXY_WORKER_COMMAND_RECEIVED
+  target_guard: target.ref must match worker_id when present
+  auto_reply_default: true
+snapshots:
+  default_delivery: mqtt_direct
+  large_snapshot_strategy_planned: mqtt_chunked_or_external_download
+security:
+  mqtts:
+    supported: true
+    ca_cert_file_default: product/config/ssl/certs/mqtt/emqx-root-ca.pem
+    tls_ciphers_default: null
+    empty_cipher_string_rule: treat_as_null
+  credentials:
+    username_password: optional
+    client_certificate: optional_future
+compatibility:
+  proxy_gateway_min_version: v01.7
+  v31_runtime_core_behavior: unchanged_when_disabled
+  default_enabled: false
+acceptance:
+  - bridge_disabled_must_not_change_v31_runtime
+  - bridge_enabled_subscribes_to_worker_command_wildcard
+  - bridge_publishes_retained_presence
+  - bridge_replies_to_client_specific_reply_topic
+  - bridge_emits_internal_command_event

@@ -1,0 +1,19 @@
+contract_id: C26
+contract_name: RUNTIME_COMMAND_BINDING_CONTRACT_V1
+version: 1
+status: active
+release: v34_preproduction_final_runtime
+event_type: V34_PROXY_RUNTIME_COMMAND_RECEIVED
+event_target: thread_management
+safe_direct_io_write: false
+operations:
+- echo
+- state_read
+- runtime_snapshot
+- set_control_method
+- parameter_update
+- safe_runtime_command
+generic_mqtt_service:
+  default_enabled: false
+  mqtts_ready: true
+  recommended_port: 8883

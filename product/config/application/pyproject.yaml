@@ -1,0 +1,3 @@
+project:
+  scripts:
+    run: "src.entry:main"

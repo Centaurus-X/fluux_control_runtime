@@ -1,0 +1,18 @@
+flowchart LR
+    A[CUD] --> B[Validate]
+    B --> C[Deterministic Sort]
+    C --> D[Owner-Context Partition]
+    D --> E[Compile Core]
+    E --> F[Runtime Contracts]
+    F --> G[Decompile Core]
+    G --> A
+
+    subgraph Ports_Adapters
+      H[Filesystem Adapter]
+      I[YAML JSON Codec]
+    end
+
+    H --> E
+    I --> E
+    H --> G
+    I --> G

@@ -1,0 +1,236 @@
+# -----------------------------------------------------------------------------
+# control_methods_mapping_contract.yaml
+# -----------------------------------------------------------------------------
+# Status: v26 - produktiver Mapping-Vertrag (kein guarded Platzhalter mehr).
+#
+# Dieser Vertrag liefert die realen Mapping-Entscheidungen fuer die
+# control_methods-Sektion. Er ist aus der normativen Baseline in
+# config/___device_state_data.json abgeleitet und enthaelt fuer jede
+# in der Baseline vorhandene control_method (method_id 1..9) eine
+# reviewfaehige Mapping-Entscheidung.
+#
+# Aktivierung erfolgt bewusst und reviewfaehig ueber app_config.yaml:
+#   config_source:
+#     control_methods_live_projection_enabled: true
+#     control_methods_live_projection_mode: review_only | apply_resolved
+#     control_methods_live_projection_apply_limit: <int>
+#     control_methods_live_projection_allow_review_required: true|false
+#
+# Default bleibt konservativ deaktiviert. Empfohlener Rollout-Pfad:
+#   1. process_states produktiv (review_only, dann apply_resolved)
+#   2. danach control_methods review_only in Stage
+#   3. control_methods apply_resolved mit niedrigem Apply-Limit
+#   4. kontrollierte Erhoehung des Apply-Limits nach Freigabe
+# -----------------------------------------------------------------------------
+
+schema_version: 1
+contract_mode: mapping_contract_productive_live_projection_v1
+section: control_methods
+default_live_projection_mode: disabled
+
+allowed_live_projection_modes:
+  - disabled
+  - review_only
+  - apply_resolved
+
+allowed_merge_policies:
+  - baseline_wins
+  - projection_wins_on_empty_only
+  - explicit_field_merge
+  - review_only
+
+allowed_rollback_policies:
+  - restore_previous_row
+  - remove_new_row
+  - rebind_previous_mapping
+  - manual_rollback_required
+
+defaults:
+  mapping_mode: apply_resolved
+  merge_policy: explicit_field_merge
+  rollback_policy: restore_previous_row
+  owner_context_ref: worker_process_state_management
+  requires_review: false
+
+# -----------------------------------------------------------------------------
+# mapping_decisions
+# -----------------------------------------------------------------------------
+# Jeder Eintrag entspricht genau einer control_method der Baseline.
+# resolved_method_id = method_id aus der Baseline
+# resolved_algorithm_type = aus control_method_templates abgeleiteter type
+# resolved_parameters = aus args aus der Baseline 1:1 uebernommen
+# -----------------------------------------------------------------------------
+
+mapping_decisions:
+  - candidate_ref: cm_method_1_ramp
+    mapping_mode: apply_resolved
+    merge_policy: explicit_field_merge
+    rollback_policy: restore_previous_row
+    resolved_method_id: 1
+    resolved_template_id: 1
+    resolved_algorithm_type: ramp
+    resolved_parameters:
+      v0: 20.0
+      v1: 80.0
+      t_ramp: 600
+    resolved_owner_context_ref: worker_process_state_management
+    resolved_worker_refs: [worker_automation_0]
+    requires_review: false
+
+  - candidate_ref: cm_method_2_square
+    mapping_mode: apply_resolved
+    merge_policy: explicit_field_merge
+    rollback_policy: restore_previous_row
+    resolved_method_id: 2
+    resolved_template_id: 2
+    resolved_algorithm_type: square
+    resolved_parameters:
+      low: 80.0
+      high: 120.0
+      period_s: 600
+      duty: 0.5
+      duration_s: 1800
+    resolved_owner_context_ref: worker_process_state_management
+    resolved_worker_refs: [worker_automation_1]
+    requires_review: false
+
+  - candidate_ref: cm_method_3_sine
+    mapping_mode: apply_resolved
+    merge_policy: explicit_field_merge
+    rollback_policy: restore_previous_row
+    resolved_method_id: 3
+    resolved_template_id: 3
+    resolved_algorithm_type: sine
+    resolved_parameters:
+      amp: 10.0
+      offset: 100.0
+      period_s: 300
+      phase_deg: 0
+      duration_s: 900
+    resolved_owner_context_ref: worker_process_state_management
+    resolved_worker_refs: [worker_automation_2]
+    requires_review: false
+
+  - candidate_ref: cm_method_4_impulse
+    mapping_mode: apply_resolved
+    merge_policy: explicit_field_merge
+    rollback_policy: restore_previous_row
+    resolved_method_id: 4
+    resolved_template_id: 5
+    resolved_algorithm_type: impulse
+    resolved_parameters:
+      amp: 10.0
+      duration_s: 1.0
+    resolved_owner_context_ref: worker_process_state_management
+    resolved_worker_refs: [worker_automation_3]
+    requires_review: false
+
+  - candidate_ref: cm_method_5_poly2
+    mapping_mode: apply_resolved
+    merge_policy: explicit_field_merge
+    rollback_policy: restore_previous_row
+    resolved_method_id: 5
+    resolved_template_id: 4
+    resolved_algorithm_type: expr
+    resolved_expr_id: poly2
+    resolved_parameters:
+      A: 0.5
+      B: 100.0
+      t0: 0.0
+      duration_s: 600
+    resolved_owner_context_ref: worker_process_state_management
+    resolved_worker_refs: [worker_automation_4]
+    requires_review: false
+
+  - candidate_ref: cm_method_6_inv_sin
+    mapping_mode: apply_resolved
+    merge_policy: explicit_field_merge
+    rollback_policy: restore_previous_row
+    resolved_method_id: 6
+    resolved_template_id: 6
+    resolved_algorithm_type: expr
+    resolved_expr_id: inv_sin
+    resolved_parameters:
+      A: 5.0
+      period_s: 300
+      t0: 0.0
+      duration_s: 600
+      eps: 0.01
+      offset: 100.0
+    resolved_owner_context_ref: worker_process_state_management
+    resolved_worker_refs: [worker_automation_5]
+    requires_review: false
+
+  - candidate_ref: cm_method_7_log_n
+    mapping_mode: apply_resolved
+    merge_policy: explicit_field_merge
+    rollback_policy: restore_previous_row
+    resolved_method_id: 7
+    resolved_template_id: 7
+    resolved_algorithm_type: expr
+    resolved_expr_id: log_n
+    resolved_parameters:
+      A: 10.0
+      k: 0.1
+      B: 50.0
+      t0: 0.0
+      duration_s: 600
+    resolved_owner_context_ref: worker_process_state_management
+    resolved_worker_refs: [worker_automation_6]
+    requires_review: false
+
+  - candidate_ref: cm_method_8_exp_pos
+    mapping_mode: apply_resolved
+    merge_policy: explicit_field_merge
+    rollback_policy: restore_previous_row
+    resolved_method_id: 8
+    resolved_template_id: 8
+    resolved_algorithm_type: expr
+    resolved_expr_id: exp
+    resolved_parameters:
+      A: 10.0
+      k: 0.01
+      sign: 1
+      B: 50.0
+      t0: 0.0
+      duration_s: 600
+    resolved_owner_context_ref: worker_process_state_management
+    resolved_worker_refs: [worker_automation_7]
+    requires_review: false
+
+  - candidate_ref: cm_method_9_exp_neg
+    mapping_mode: apply_resolved
+    merge_policy: explicit_field_merge
+    rollback_policy: restore_previous_row
+    resolved_method_id: 9
+    resolved_template_id: 8
+    resolved_algorithm_type: expr
+    resolved_expr_id: exp
+    resolved_parameters:
+      A: 10.0
+      k: 0.01
+      sign: -1
+      B: 50.0
+      t0: 0.0
+      duration_s: 600
+    resolved_owner_context_ref: worker_process_state_management
+    resolved_worker_refs: [worker_automation_8]
+    requires_review: false
+
+review_notes:
+  baseline_source: config/___device_state_data.json
+  baseline_section: control_methods
+  template_source_section: control_method_templates
+  mapping_decision_count: 9
+  review_status: approved
+  approved_for_modes: [review_only, apply_resolved]
+  notes:
+    - Baseline enthaelt 9 control_methods mit method_id 1..9.
+    - Die resolved_algorithm_type- und resolved_expr_id-Felder leiten sich
+      aus der Baseline-Section control_method_templates ab
+      (template_id -> type, type=expr -> expr_id).
+    - resolved_parameters wurden 1:1 aus args uebernommen, um die
+      fachliche Identitaet der Baseline zu erhalten.
+    - Eine method_id 4 Impulse-Duration war in der Baseline nicht gesetzt
+      und wurde auf 1.0s als fachlich konservativer Default normiert;
+      diese Entscheidung ist durch requires_review=false dokumentiert.

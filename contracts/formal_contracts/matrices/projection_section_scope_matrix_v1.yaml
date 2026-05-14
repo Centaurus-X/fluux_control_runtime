@@ -1,0 +1,77 @@
+projection_version: 1
+projection_scope_class: minimal_kernel_overlay_v1
+
+project_now:
+  - section: config_schema_version
+    source_layer: compile_projection
+    authority_plane: control_plane
+    consistency: strong
+    activation_scope: affected_workers
+  - section: compile_projection_meta
+    source_layer: compile_projection
+    authority_plane: control_plane
+    consistency: strong
+    activation_scope: affected_workers
+  - section: runtime_topology
+    source_layer: compile_projection
+    authority_plane: control_plane
+    consistency: strong
+    activation_scope: affected_workers
+  - section: chunk_registry
+    source_layer: compile_projection
+    authority_plane: control_plane
+    consistency: strong
+    activation_scope: affected_workers
+  - section: event_routes
+    source_layer: compile_projection
+    authority_plane: control_plane
+    consistency: strong
+    activation_scope: affected_workers
+  - section: event_payload_contracts
+    source_layer: compile_projection
+    authority_plane: control_plane
+    consistency: strong
+    activation_scope: affected_workers
+  - section: runtime_control_state_boot
+    source_layer: compile_projection
+    authority_plane: control_plane
+    consistency: strong
+    activation_scope: affected_workers
+
+project_later:
+  - section: process_states
+    blocker: ownership_and_activation_detail_missing
+  - section: control_methods
+    blocker: ownership_and_activation_detail_missing
+  - section: events
+    blocker: legacy_vs_compiled_event_definition_alignment_missing
+  - section: triggers
+    blocker: legacy_vs_compiled_event_definition_alignment_missing
+  - section: actions
+    blocker: legacy_vs_compiled_event_definition_alignment_missing
+  - section: transitions
+    blocker: legacy_vs_compiled_event_definition_alignment_missing
+  - section: dynamic_rule_engine
+    blocker: merge_policy_not_frozen
+
+keep_baseline_or_deployment_driven:
+  - section: controllers
+    reason: physical_runtime_binding_and_overlay_policy_not_frozen
+  - section: virtual_controllers
+    reason: physical_runtime_binding_and_overlay_policy_not_frozen
+  - section: sensors
+    reason: physical_runtime_binding_and_overlay_policy_not_frozen
+  - section: actuators
+    reason: physical_runtime_binding_and_overlay_policy_not_frozen
+  - section: processes
+    reason: baseline_structure_still_authoritative
+  - section: process_values
+    reason: runtime_mutation_vs_compile_authority_not_split_enough
+  - section: process_modes
+    reason: runtime_mutation_vs_compile_authority_not_split_enough
+  - section: pid_configs
+    reason: activation_and_review_rules_not_split_enough
+  - section: timers
+    reason: activation_and_review_rules_not_split_enough
+  - section: comm_profiles
+    reason: deployment_overlay_and_edge_binding_not_split_enough

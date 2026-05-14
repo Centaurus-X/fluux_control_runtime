@@ -1,0 +1,134 @@
+bindings:
+- address:
+    address: 11
+    area: holding_register
+    endpoint: tcp://10.0.0.22:502
+    protocol: modbus_tcp
+    unit: 1
+  binding_kind: io
+  codec:
+    eng_max: 100.0
+    eng_min: 0.0
+    raw_max: 10000
+    raw_min: 0
+    raw_type: uint16
+    scaling: linear
+    unit: percent
+  direction: egress
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: BND_SIG_REACTOR_COOLING_VALVE_CV
+  owner_context_ref: POC_WAGO_B
+  point_ref: POINT_COOLING_VALVE_CV_RAW
+  qos:
+    flush_period_ms: 100
+    retry_backoff_ms: 250
+  signal_ref: SIG_REACTOR_COOLING_VALVE_CV
+  source_ref: SIG_REACTOR_COOLING_VALVE_CV
+- address:
+    address: 3
+    area: coil
+    endpoint: tcp://10.0.0.22:502
+    protocol: modbus_tcp
+    unit: 1
+  binding_kind: io
+  codec:
+    eng_type: bool
+    raw_type: bool
+  direction: ingress
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: BND_SIG_REACTOR_ESTOP
+  owner_context_ref: POC_WAGO_B
+  point_ref: POINT_ESTOP_RAW
+  qos:
+    sample_period_ms: 50
+    stale_timeout_ms: 1000
+  signal_ref: SIG_REACTOR_ESTOP
+  source_ref: SIG_REACTOR_ESTOP
+- address:
+    address: 10
+    area: holding_register
+    endpoint: tcp://10.0.0.21:502
+    protocol: modbus_tcp
+    unit: 1
+  binding_kind: io
+  codec:
+    eng_max: 100.0
+    eng_min: 0.0
+    raw_max: 10000
+    raw_min: 0
+    raw_type: uint16
+    scaling: linear
+    unit: percent
+  direction: egress
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: BND_SIG_REACTOR_HEATER_CV
+  owner_context_ref: POC_WAGO_A
+  point_ref: POINT_HEATER_CV_RAW
+  qos:
+    flush_period_ms: 100
+    retry_backoff_ms: 250
+  signal_ref: SIG_REACTOR_HEATER_CV
+  source_ref: SIG_REACTOR_HEATER_CV
+- address:
+    address: 2
+    area: holding_register
+    endpoint: tcp://10.0.0.21:502
+    protocol: modbus_tcp
+    unit: 1
+  binding_kind: io
+  codec:
+    eng_max: 16.0
+    eng_min: 0.0
+    raw_max: 65535
+    raw_min: 0
+    raw_type: uint16
+    scaling: linear
+    unit: bar
+  direction: ingress
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: BND_SIG_REACTOR_PRESS_PV
+  owner_context_ref: POC_WAGO_A
+  point_ref: POINT_PRESS_PV_RAW
+  qos:
+    sample_period_ms: 100
+    stale_timeout_ms: 3000
+  signal_ref: SIG_REACTOR_PRESS_PV
+  source_ref: SIG_REACTOR_PRESS_PV
+- address:
+    address: 1
+    area: holding_register
+    endpoint: tcp://10.0.0.21:502
+    protocol: modbus_tcp
+    unit: 1
+  binding_kind: io
+  codec:
+    eng_max: 300.0
+    eng_min: 0.0
+    raw_max: 65535
+    raw_min: 0
+    raw_type: uint16
+    scaling: linear
+    unit: degC
+  direction: ingress
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: BND_SIG_REACTOR_TEMP_PV
+  owner_context_ref: POC_WAGO_A
+  point_ref: POINT_TEMP_PV_RAW
+  qos:
+    sample_period_ms: 100
+    stale_timeout_ms: 3000
+  signal_ref: SIG_REACTOR_TEMP_PV
+  source_ref: SIG_REACTOR_TEMP_PV
+- address: {}
+  binding_kind: internal
+  codec: {}
+  direction: internal
+  domain_ref: LDC_REACTOR_A_MAIN
+  id: BND_SIG_REACTOR_TEMP_SP
+  owner_context_ref: LDC_REACTOR_A_MAIN
+  point_ref: null
+  qos: {}
+  signal_ref: SIG_REACTOR_TEMP_SP
+  source_ref: SIG_REACTOR_TEMP_SP
+io_bindings_id: IOB_47962339d7e68ccf
+source_cud_hash: 9bc912ab8c151381cac7847a6174e052b8a83a62c07658173380d46a4147c737

@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "compiler-engine-skeleton"
+version = "0.1.0"
+description = "Functional skeleton for a deterministic compile/decompile core"
+requires-python = ">=3.11"
+dependencies = ["PyYAML>=6.0"]

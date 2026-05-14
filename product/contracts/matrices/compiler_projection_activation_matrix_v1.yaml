@@ -1,0 +1,23 @@
+schema_version: 1
+
+mutation_classes:
+  - mutation_class: overlay_update
+    compile_required: false
+    activation_class: local_worker
+    requires_restart: false
+  - mutation_class: event_contract_update
+    compile_required: false
+    activation_class: affected_workers
+    requires_restart: false
+  - mutation_class: compile_incremental
+    compile_required: true
+    activation_class: affected_workers
+    requires_restart: false
+  - mutation_class: compile_full
+    compile_required: true
+    activation_class: global
+    requires_restart: possible
+  - mutation_class: topology_update
+    compile_required: true
+    activation_class: affected_workers
+    requires_restart: possible

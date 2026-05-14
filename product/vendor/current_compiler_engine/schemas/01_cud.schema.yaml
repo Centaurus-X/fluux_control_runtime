@@ -1,0 +1,149 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://example.local/schemas/cud.schema.yaml
+title: Canonical Universal Dataset
+type: object
+required:
+  - schema_version
+  - canonical_id
+  - metadata
+  - assets
+  - points
+  - signals
+  - rule_sources
+  - domains
+properties:
+  schema_version:
+    type: string
+  canonical_id:
+    type: string
+  metadata:
+    type: object
+  assets:
+    type: array
+    items:
+      type: object
+      required: [id, kind, name]
+      properties:
+        id: {type: string}
+        kind: {type: string}
+        name: {type: string}
+        asset_type: {type: string}
+        asset_class: {type: string}
+        parent_ref: {type: string}
+        owner_context_hint: {type: string}
+        addressing: {type: object}
+        vendor: {type: object}
+        placeholders: {type: object}
+      additionalProperties: true
+  relations:
+    type: array
+    items:
+      type: object
+      required: [id, relation_type, source_ref, target_ref]
+      properties:
+        id: {type: string}
+        relation_type: {type: string}
+        source_ref: {type: string}
+        target_ref: {type: string}
+      additionalProperties: true
+  points:
+    type: array
+    items:
+      type: object
+      required: [id, point_type, direction, owner_context_ref]
+      properties:
+        id: {type: string}
+        point_type: {type: string}
+        direction: {type: string, enum: [ingress, egress, internal]}
+        owner_context_ref: {type: string}
+        asset_ref: {type: string}
+        address: {type: object}
+        qos: {type: object}
+        codec: {type: object}
+        placeholders: {type: object}
+      additionalProperties: true
+  signals:
+    type: array
+    items:
+      type: object
+      required: [id, signal_type, direction, domain_ref]
+      properties:
+        id: {type: string}
+        signal_type: {type: string}
+        direction: {type: string, enum: [ingress, egress, internal]}
+        point_ref: {type: string}
+        domain_ref: {type: string}
+        qos: {type: object}
+        initial_value: {}
+        placeholders: {type: object}
+      additionalProperties: true
+  parameter_sets:
+    type: array
+    items:
+      type: object
+      required: [id, parameters]
+      properties:
+        id: {type: string}
+        parameters: {type: object}
+      additionalProperties: true
+  timer_sources:
+    type: array
+    items:
+      type: object
+      required: [id, timer_type]
+      properties:
+        id: {type: string}
+        timer_type: {type: string}
+      additionalProperties: true
+  fsm_sources:
+    type: array
+    items:
+      type: object
+      required: [id, states]
+      properties:
+        id: {type: string}
+        states: {type: array}
+        transitions: {type: array}
+      additionalProperties: true
+  rule_sources:
+    type: array
+    items:
+      type: object
+      required: [id, stage, priority, domain_ref]
+      properties:
+        id: {type: string}
+        stage:
+          type: string
+          enum: [safety, guard, fsm, control, sequence, projection, notification]
+        priority: {type: integer}
+        domain_ref: {type: string}
+        when: {}
+        then: {}
+        else: {}
+        placeholders: {type: object}
+      additionalProperties: true
+  domains:
+    type: array
+    items:
+      type: object
+      required: [id, name]
+      properties:
+        id: {type: string}
+        name: {type: string}
+        signal_refs: {type: array, items: {type: string}}
+        rule_refs: {type: array, items: {type: string}}
+        timer_refs: {type: array, items: {type: string}}
+        fsm_refs: {type: array, items: {type: string}}
+        parameter_set_refs: {type: array, items: {type: string}}
+        physical_owner_context_refs: {type: array, items: {type: string}}
+      additionalProperties: true
+  owner_context_hints:
+    type: object
+    properties:
+      physical: {type: array}
+      logical: {type: array}
+      coordination_edges: {type: array}
+    additionalProperties: true
+  placeholders:
+    type: object
+additionalProperties: true

@@ -1,0 +1,7 @@
+flowchart LR
+    A[CUD] --> B[Compile]
+    B --> C[Runtime Contract Bundle]
+    C --> D[Decompile]
+    D --> E[Reconstructed CUD]
+    C --> F[Runtime Change Set]
+    F --> G[CUD Delta]

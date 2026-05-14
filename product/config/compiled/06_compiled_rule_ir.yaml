@@ -1,0 +1,133 @@
+hierarchy:
+- safety
+- guard
+- fsm
+- control
+- sequence
+- projection
+- notification
+ir_id: RULEIR_987624a87827aa68
+rules:
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_SAFETY_ESTOP
+  normalized_else: {}
+  normalized_then:
+    force_fsm_state:
+    - fsm_ref: FSM_HEAT_LOOP
+      state: INTERLOCK
+    set_signals:
+    - signal_ref: SIG_REACTOR_HEATER_CV
+      value: 0.0
+    - signal_ref: SIG_REACTOR_COOLING_VALVE_CV
+      value: 0.0
+  normalized_when:
+    all:
+    - op: equals
+      signal_ref: SIG_REACTOR_ESTOP
+      value: true
+  owner_context_ref: LDC_REACTOR_A_MAIN
+  placeholders: {}
+  priority: 1000
+  rule_hash: 7fb1e8bdfaf374832354c146fdeb0c77cba1c85a9e8f3f305bc9b266b06dd91f
+  source_ref: RULE_SAFETY_ESTOP
+  stage: safety
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_GUARD_PRESSURE_HIGH
+  normalized_else: {}
+  normalized_then:
+    deny_commands:
+    - CMD_HEAT_START
+  normalized_when:
+    all:
+    - op: greater_than
+      signal_ref: SIG_REACTOR_PRESS_PV
+      value: 8.0
+  owner_context_ref: LDC_REACTOR_A_MAIN
+  placeholders: {}
+  priority: 900
+  rule_hash: b8596f94ea70ce32ac7e83ef8911a641ac013b92ddcffae3646f6b591e4328cf
+  source_ref: RULE_GUARD_PRESSURE_HIGH
+  stage: guard
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_FSM_START
+  normalized_else: {}
+  normalized_then:
+    force_fsm_state:
+    - fsm_ref: FSM_HEAT_LOOP
+      state: RUNNING
+  normalized_when:
+    all:
+    - command_ref: CMD_HEAT_START
+    - fsm_ref: FSM_HEAT_LOOP
+      state_is: IDLE
+  owner_context_ref: LDC_REACTOR_A_MAIN
+  placeholders: {}
+  priority: 800
+  rule_hash: 01d461942f1df67d01f0c188e86791527d9ec6ab0622cfd122b512e4da52aeff
+  source_ref: RULE_FSM_START
+  stage: fsm
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_CONTROL_HEAT_PID
+  normalized_else: {}
+  normalized_then:
+    compute:
+      inputs:
+      - SIG_REACTOR_TEMP_PV
+      - SIG_REACTOR_TEMP_SP
+      limits:
+        max: 100.0
+        min: 0.0
+      output_signal_ref: SIG_REACTOR_HEATER_CV
+      strategy: placeholder_pid
+  normalized_when:
+    all:
+    - fsm_ref: FSM_HEAT_LOOP
+      state_is: RUNNING
+  owner_context_ref: LDC_REACTOR_A_MAIN
+  placeholders:
+    advanced_control_methods:
+      pid_profile_ref: PID_STD_01
+  priority: 700
+  rule_hash: f410f70d2a13d0453fa8d97c2a79139711d09944a7cf53a94b9d764b3dc00a89
+  source_ref: RULE_CONTROL_HEAT_PID
+  stage: control
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_SEQUENCE_COOLING_SUPPORT
+  normalized_else:
+    set_signals:
+    - signal_ref: SIG_REACTOR_COOLING_VALVE_CV
+      value: 0.0
+  normalized_then:
+    set_signals:
+    - signal_ref: SIG_REACTOR_COOLING_VALVE_CV
+      value: 35.0
+  normalized_when:
+    all:
+    - op: greater_than
+      signal_ref: SIG_REACTOR_TEMP_PV
+      value: 125.0
+  owner_context_ref: LDC_REACTOR_A_MAIN
+  placeholders: {}
+  priority: 600
+  rule_hash: 74c071a0271c9921e188e57024382e48a88d4f85935280d9040c7978b98e7465
+  source_ref: RULE_SEQUENCE_COOLING_SUPPORT
+  stage: sequence
+- domain_ref: LDC_REACTOR_A_MAIN
+  id: RULE_NOTIFY_HEAT_READY
+  normalized_else: {}
+  normalized_then:
+    emit:
+    - code: HEAT_READY
+      kind: notification
+  normalized_when:
+    all:
+    - op: greater_or_equal
+      signal_ref: SIG_REACTOR_TEMP_PV
+      value: 119.0
+  owner_context_ref: LDC_REACTOR_A_MAIN
+  placeholders: {}
+  priority: 100
+  rule_hash: d90704e03006b58b3c30b112c883e3cc875ee46268a784914bd85d0b617946f4
+  source_ref: RULE_NOTIFY_HEAT_READY
+  stage: notification
+source_cud_hash: 9bc912ab8c151381cac7847a6174e052b8a83a62c07658173380d46a4147c737

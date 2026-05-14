@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv*/
+venv*/
+*.egg-info/
+
+# Runtime logs and local state
+product/logs/**/*.log
+product/logs/**/*.log.*
+product/logs/**/*.gz
+product/logs/**/*.zip
+product/config/ssl/certs/mqtt/*.pem
+product/config/ssl/certs/mqtt/*.key
+
+# Local output artifacts
+*_output.json
+*_ausgabe.json
+client_e2e*.log
+runtime_v34*.log
+
+# OS/editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Local-only private development history
+_private/
+archive/*.zip
+product/config/backup/
+
+_private/
+.venv*/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+*.log
+.env
+*.env

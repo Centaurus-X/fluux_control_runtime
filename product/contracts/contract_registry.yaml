@@ -1,0 +1,677 @@
+schema_version: 1
+registry_id: CONTRACT_REGISTRY_V1
+status: active_runtime_resolved
+product_release_target: v34_preproduction_final_runtime
+canonical_contract_root: product/contracts
+intent: Single Source of Truth fuer Sichtbarkeit, Klassifizierung und Verknuepfung
+  der Vertragslandschaft.
+naming_policy:
+  formal_contract_files: UPPER_SNAKE_CASE_WITH_VERSION
+  runtime_contract_files: UPPER_SNAKE_CASE_WITH_VERSION
+  data_contract_files: UPPER_SNAKE_CASE_WITH_VERSION
+  legacy_aliases: removed_from_product_config_contracts_in_v31
+canonical_directory_layout:
+  formal: product/contracts/formal
+  runtime: product/contracts/runtime
+  data: product/contracts/data
+  examples: product/contracts/examples
+  matrices: product/contracts/matrices
+  archive: product/contracts/archive
+  registry: product/contracts/contract_registry.yaml
+runtime_resolution:
+  mode: contract_id_to_registry_path
+  owner: product/src/orchestration/runtime_config.py
+  configured_registry_path: product/config/application/app_config.yaml#contract_registry.registry_path
+  strict_default: true
+  runtime_contract_ids:
+    process_states_mapping: C08
+    control_methods_mapping: C17
+    proxy_worker_bridge: C26
+    runtime_command_binding: C27
+  rule: app_config selects Contract-IDs only; concrete runtime_instance paths are
+    resolved from this registry.
+representation_values:
+  formal_only: Nur normative Spezifikation, nicht direkt runtime-geladen.
+  runtime_loaded: YAML/JSON wird zur Laufzeit geladen.
+  code_enforced: Vertrag wird durch Code/Algorithmus/Guardrail vollzogen.
+  formal_and_code: Spezifikation plus Code-Enforcement.
+  formal_runtime_and_code: Spezifikation plus runtime-geladene Instanz plus Code-Enforcement.
+  formal_code_and_data_candidate: Aktuell Code-Enforcement; datenartige Teilmenge
+    kann externalisiert werden.
+  formal_data_and_code: Spezifikation plus externalisierter Datenvertrag plus Code-Enforcement.
+  formal_reference: Referenz-/Migrations-/Prozessdokument, kein operativer Runtime-Vertrag.
+global_rules:
+- product/contracts ist langfristig die zentrale Vertragsheimat.
+- product/config bleibt fuer operative Instanzkonfiguration, nicht fuer normative
+  Spezifikation.
+- runtime_mapping YAMLs sind kanonisch unter product/contracts/runtime.
+- v31 Runtime-Komponenten duerfen operative Contract-Dateipfade nicht mehr aus app_config
+  ableiten, sondern muessen Contract-IDs ueber diese Registry aufloesen.
+- product/config/contracts ist in v31 aus dem Produkt entfernt; verbleibende historische
+  Kopien ausserhalb von product sind nicht kanonisch.
+- Algorithmen bleiben Code; nur datenartige Vertragsbestandteile werden externalisiert.
+- contract_registry.yaml ist Register und Verknuepfungsschicht, nicht selbst der Algorithmus.
+entries:
+- contract_id: C01
+  title: Runtime Registry Ownership Consistency
+  status: active
+  classification: runtime_core
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/01_RUNTIME_REGISTRY_OWNERSHIP_CONSISTENCY_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/01_RUNTIME_REGISTRY_OWNERSHIP_CONSISTENCY_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/libraries/_type_mapping_registry.py
+  - product/src/orchestration/runtime_config.py
+  - product/src/orchestration/config_chunking.py
+  externalization: partial_data_candidate
+  notes: Definiert Ownership, Registry- und Konsistenzgrundlagen; datenartige Teilmenge
+    in C19/C20 externalisierbar.
+- contract_id: C02
+  title: Compiler Projection Runtime Bridge
+  status: active
+  classification: compiler_projection
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/02_COMPILER_PROJECTION_RUNTIME_BRIDGE_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/02_COMPILER_PROJECTION_RUNTIME_BRIDGE_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_cud_compiler_adapter.py
+  - product/src/adapters/compiler/_projection_bridge.py
+  - product/src/adapters/compiler/_compatibility_validator.py
+  - product/src/orchestration/runtime_config.py
+  externalization: no_algorithm_export
+  notes: Normativer Compile/Projection/Runtime-Pfad; Algorithmik bleibt Code.
+- contract_id: C03
+  title: Edge Gateway MQTT Proxy Master
+  status: active_optional
+  classification: edge_gateway_master
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/03_EDGE_GATEWAY_MQTT_PROXY_MASTER_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/03_EDGE_GATEWAY_MQTT_PROXY_MASTER_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/core/worker_gateway.py
+  - product/src/core/generic_mqtt_thread.py
+  - product/src/orchestration/thread_specs.py
+  - product/src/orchestration/runtime_config.py
+  - product/src/libraries/edge/_acl.py
+  - product/src/libraries/edge/_codec.py
+  - product/src/libraries/edge/_contracts.py
+  - product/src/libraries/edge/_sync.py
+  externalization: none
+  notes: Worker-Gateway ist integriert; MQTT-Proxy/Master bleiben geplante optionale
+    Ausbaustufe.
+- contract_id: C04
+  title: Nächste Schritte Patch-Sequenz
+  status: reference
+  classification: process_document
+  representation: formal_reference
+  source_of_truth: process_doc
+  current_paths:
+    formal_spec: product/contracts/formal/04_NAECHSTE_SCHRITTE_PATCH_SEQUENZ_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/04_NAECHSTE_SCHRITTE_PATCH_SEQUENZ_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement: []
+  externalization: none
+  notes: Kein operativer Runtime-Vertrag; als Prozess-/Migrationsdokument unter product/contracts/process
+    oder archive klassifizieren.
+- contract_id: C05
+  title: Projection Scope und Legacy-Sektionen
+  status: active
+  classification: projection_scope
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/05_PROJECTION_SCOPE_UND_LEGACY_SEKTIONEN_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/05_PROJECTION_SCOPE_UND_LEGACY_SEKTIONEN_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_projection_bridge.py
+  - product/src/adapters/compiler/_compatibility_validator.py
+  externalization: none
+  notes: Legt fest, welche Sektionen projected, sidecar-only oder legacy-only sind.
+- contract_id: C06
+  title: Runtime Compile Reverse Compile
+  status: active
+  classification: compile_reverse_compile
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/06_RUNTIME_COMPILE_REVERSE_COMPILE_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/06_RUNTIME_COMPILE_REVERSE_COMPILE_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_cud_compiler_adapter.py
+  - product/src/adapters/compiler/_reverse_compile_loop.py
+  - product/src/orchestration/runtime_config.py
+  externalization: none
+  notes: Compile/Reverse-Compile-Orchestrierung; Semantik bleibt Code.
+- contract_id: C07
+  title: Process States Projection Vorbereitung
+  status: migration_reference
+  classification: migration_preparation
+  representation: formal_reference
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/07_PROCESS_STATES_PROJECTION_VORBEREITUNG_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/07_PROCESS_STATES_PROJECTION_VORBEREITUNG_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_projection_bridge.py
+  externalization: none
+  notes: Vorbereitungsdokument; operativ durch C08/C10 abgelöst.
+- contract_id: C08
+  title: Process States Mapping
+  status: active
+  classification: runtime_mapping
+  representation: formal_runtime_and_code
+  source_of_truth: runtime_instance
+  current_paths:
+    formal_spec: product/contracts/formal/08_PROCESS_STATES_MAPPING_CONTRACT_V1.md
+    runtime_instance: product/contracts/runtime/PROCESS_STATES_MAPPING_CONTRACT_V1.yaml
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/08_PROCESS_STATES_MAPPING_CONTRACT_V1.md
+    runtime_instance: product/contracts/runtime/PROCESS_STATES_MAPPING_CONTRACT_V1.yaml
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_cud_compiler_adapter.py
+  - product/src/adapters/compiler/_projection_bridge.py
+  - product/src/adapters/compiler/_live_projection_engine.py
+  - product/src/adapters/compiler/_compatibility_validator.py
+  externalization: already_external
+  notes: Echter runtime-geladener Mapping-Vertrag; langfristig kanonisch unter product/contracts/runtime.
+- contract_id: C09
+  title: Runtime Change Set und Reverse Compile
+  status: active
+  classification: runtime_change_reverse_compile
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/09_RUNTIME_CHANGE_SET_UND_REVERSE_COMPILE_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/09_RUNTIME_CHANGE_SET_UND_REVERSE_COMPILE_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_runtime_change_capture.py
+  - product/src/adapters/compiler/_reverse_compile_loop.py
+  - product/src/adapters/compiler/_cud_compiler_adapter.py
+  externalization: none
+  notes: Change-Set-Form und Reverse-Compile-Kette; Speicherung/Verarbeitung bleibt
+    Code plus Files.
+- contract_id: C10
+  title: Process States Aktivierung Merge Rollback
+  status: active
+  classification: live_projection_activation
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/10_PROCESS_STATES_AKTIVIERUNG_MERGE_ROLLBACK_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/10_PROCESS_STATES_AKTIVIERUNG_MERGE_ROLLBACK_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_projection_bridge.py
+  - product/src/adapters/compiler/_live_projection_engine.py
+  - product/src/adapters/compiler/_compatibility_validator.py
+  externalization: none
+  notes: Guarded Apply/Merge/Rollback-Regeln für process_states; Algorithmen nicht
+    auslagern.
+- contract_id: C11
+  title: V15 Paketvollständigkeit und Freigabe
+  status: historical_reference
+  classification: release_report
+  representation: formal_reference
+  source_of_truth: process_doc
+  current_paths:
+    formal_spec: product/contracts/formal/11_V15_PAKETVOLLSTAENDIGKEIT_UND_FREIGABE_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/11_V15_PAKETVOLLSTAENDIGKEIT_UND_FREIGABE_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement: []
+  externalization: none
+  notes: Kein Runtime-Vertrag; als historischer Freigabe-/Abnahmebezug archivieren.
+- contract_id: C12
+  title: Runtime Change Capture Producer
+  status: active
+  classification: runtime_change_capture
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/12_RUNTIME_CHANGE_CAPTURE_PRODUCER_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/12_RUNTIME_CHANGE_CAPTURE_PRODUCER_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_runtime_change_capture.py
+  - product/src/core/worker_datastore.py
+  externalization: none
+  notes: Erzeugung deterministischer Change-Sets; konkrete Erzeugungslogik bleibt
+    Code.
+- contract_id: C13
+  title: Reverse Compile Consumer
+  status: active
+  classification: reverse_compile
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/13_REVERSE_COMPILE_CONSUMER_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/13_REVERSE_COMPILE_CONSUMER_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_reverse_compile_loop.py
+  - product/src/adapters/compiler/_cud_compiler_adapter.py
+  externalization: none
+  notes: Verbrauch von Change-Sets und Rückübersetzung in CUD-Delta/Artefakte.
+- contract_id: C14
+  title: Control Methods Vorbereitung
+  status: migration_reference
+  classification: migration_preparation
+  representation: formal_reference
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/14_CONTROL_METHODS_VORBEREITUNG_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/14_CONTROL_METHODS_VORBEREITUNG_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_projection_bridge.py
+  externalization: none
+  notes: Vorbereitungsdokument; operativ durch C17 und C18 abgelöst.
+- contract_id: C15
+  title: Runtime Core Integration
+  status: active
+  classification: runtime_core_integration
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/15_RUNTIME_CORE_INTEGRATION_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/15_RUNTIME_CORE_INTEGRATION_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/core/worker_datastore.py
+  - product/src/core/state_event_management.py
+  - product/src/core/sync_event_router.py
+  - product/src/orchestration/thread_specs.py
+  - product/src/orchestration/runtime_config.py
+  externalization: none
+  notes: Klammervertrag für Runtime-Kern, Threading, Datastore und SEM.
+- contract_id: C16
+  title: Event Envelope Vector Clock
+  status: active
+  classification: event_contract
+  representation: formal_data_and_code
+  source_of_truth: formal_spec_and_data_contract
+  current_paths:
+    formal_spec: product/contracts/formal/16_EVENT_ENVELOPE_VECTOR_CLOCK_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: product/contracts/data/EVENT_ENVELOPE_CONTRACT_V1.yaml
+  planned_paths:
+    formal_spec: product/contracts/formal/16_EVENT_ENVELOPE_VECTOR_CLOCK_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: product/contracts/data/EVENT_ENVELOPE_CONTRACT_V1.yaml
+  code_enforcement:
+  - product/src/libraries/_event_envelope.py
+  - product/src/core/sync_event_router.py
+  externalization: externalized_data_reference
+  notes: Datenartige Allowed-Values und Feldkataloge sind gute Kandidaten für Externalisierung;
+    Enrichment-Algorithmus bleibt Code.
+- contract_id: C17
+  title: Control Methods Live Projection
+  status: active
+  classification: runtime_mapping
+  representation: formal_runtime_and_code
+  source_of_truth: runtime_instance
+  current_paths:
+    formal_spec: product/contracts/formal/17_CONTROL_METHODS_LIVE_PROJECTION_CONTRACT_V1.md
+    runtime_instance: product/contracts/runtime/CONTROL_METHODS_MAPPING_CONTRACT_V1.yaml
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/17_CONTROL_METHODS_LIVE_PROJECTION_CONTRACT_V1.md
+    runtime_instance: product/contracts/runtime/CONTROL_METHODS_MAPPING_CONTRACT_V1.yaml
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_cud_compiler_adapter.py
+  - product/src/adapters/compiler/_projection_bridge.py
+  - product/src/adapters/compiler/_live_projection_engine.py
+  - product/src/adapters/compiler/_compatibility_validator.py
+  externalization: already_external
+  notes: Zweiter echter runtime-geladener Mapping-Vertrag; langfristig kanonisch unter
+    product/contracts/runtime.
+- contract_id: C18
+  title: Generic Apply Rollback Engine
+  status: active
+  classification: apply_rollback_engine
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/18_GENERIC_APPLY_ROLLBACK_ENGINE_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/18_GENERIC_APPLY_ROLLBACK_ENGINE_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/adapters/compiler/_live_projection_engine.py
+  - product/src/adapters/compiler/_projection_bridge.py
+  externalization: no_algorithm_export
+  notes: Algorithmischer Vertrag; nicht als Daten auslagern, nur Parameter/Policies
+    externalisierbar.
+- contract_id: C19
+  title: Type Mapping Registry
+  status: active
+  classification: type_mapping_registry
+  representation: formal_data_and_code
+  source_of_truth: formal_spec_and_data_contract
+  current_paths:
+    formal_spec: product/contracts/formal/19_TYPE_MAPPING_REGISTRY_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: product/contracts/data/TYPE_MAPPING_REGISTRY_CONTRACT_V1.yaml
+  planned_paths:
+    formal_spec: product/contracts/formal/19_TYPE_MAPPING_REGISTRY_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: product/contracts/data/TYPE_MAPPING_REGISTRY_CONTRACT_V1.yaml
+  code_enforcement:
+  - product/src/libraries/_type_mapping_registry.py
+  externalization: externalized_data_reference
+  notes: Registry-Inhalte sind datenartig und sollten langfristig aus dem Code referenzierbar/externalisierbar
+    werden.
+- contract_id: C20
+  title: Consistency Zones
+  status: active
+  classification: consistency_zones
+  representation: formal_data_and_code
+  source_of_truth: formal_spec_and_data_contract
+  current_paths:
+    formal_spec: product/contracts/formal/20_CONSISTENCY_ZONES_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: product/contracts/data/CONSISTENCY_ZONES_CONTRACT_V1.yaml
+  planned_paths:
+    formal_spec: product/contracts/formal/20_CONSISTENCY_ZONES_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: product/contracts/data/CONSISTENCY_ZONES_CONTRACT_V1.yaml
+  code_enforcement:
+  - product/src/libraries/_type_mapping_registry.py
+  externalization: externalized_data_reference
+  notes: Zonen-Katalog ist datenartig; Enforcement bleibt Code.
+- contract_id: C21
+  title: Causation Tracker
+  status: active
+  classification: causation_tracking
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/21_CAUSATION_TRACKER_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/21_CAUSATION_TRACKER_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/libraries/_event_envelope.py
+  - product/src/core/sync_event_router.py
+  externalization: none
+  notes: Tracker-State und Ableitungslogik bleiben Code; Konfigflags können external
+    bleiben.
+- contract_id: C22
+  title: Hot Standby
+  status: active_optional
+  classification: ha_hot_standby
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/22_HOT_STANDBY_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/22_HOT_STANDBY_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/libraries/_node_role.py
+  - product/src/core/_replication_commit_validator.py
+  - product/src/core/_worker_writer_sync.py
+  - product/src/core/_snapshot_freeze.py
+  - product/src/core/_state_version.py
+  externalization: none
+  notes: HA-Baustein vorbereitet; produktive Aktivierung bleibt rollout-/deploymentabhängig.
+- contract_id: C23
+  title: Raft Multi Master
+  status: active_optional
+  classification: ha_multi_master
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/23_RAFT_MULTI_MASTER_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/23_RAFT_MULTI_MASTER_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/libraries/_raft_election.py
+  - product/src/core/_replication_commit_validator.py
+  - product/src/libraries/_node_role.py
+  externalization: none
+  notes: Optionales Multi-Master-Modell; nicht Default für Worker-Hot-State.
+- contract_id: C24
+  title: Regional Federation
+  status: active_optional
+  classification: regional_federation
+  representation: formal_and_code
+  source_of_truth: formal_spec
+  current_paths:
+    formal_spec: product/contracts/formal/24_REGIONAL_FEDERATION_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/24_REGIONAL_FEDERATION_CONTRACT_V1.md
+    runtime_instance: null
+    data_contract: null
+  code_enforcement:
+  - product/src/libraries/_federation_bridge.py
+  - product/src/libraries/_node_role.py
+  externalization: none
+  notes: Optionale föderierte Verteilung; Eventual Consistency am Rand, nicht im Worker-Kern.
+- contract_id: C25
+  title: Proxy Worker Bridge
+  status: superseded_by_C26
+  classification: edge_gateway_worker_binding
+  representation: formal_runtime_and_code
+  source_of_truth: formal_spec_and_runtime_contract
+  current_paths:
+    formal_spec: product/contracts/formal/25_PROXY_WORKER_BRIDGE_CONTRACT_V1.md
+    runtime_instance: product/contracts/runtime/PROXY_WORKER_BRIDGE_CONTRACT_V1.yaml
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/25_PROXY_WORKER_BRIDGE_CONTRACT_V1.md
+    runtime_instance: product/contracts/runtime/PROXY_WORKER_BRIDGE_CONTRACT_V1.yaml
+    data_contract: null
+  code_enforcement:
+  - product/src/core/proxy_worker_bridge.py
+  - product/src/orchestration/runtime_config.py
+  - product/src/orchestration/thread_specs.py
+  externalization: runtime_contract
+  notes: v32 bridge contract; superseded by C26 in v33 pre-production runtime command
+    binding.
+- contract_id: C26
+  title: Runtime Command Binding
+  status: active_optional
+  classification: proxy_worker_runtime_binding
+  representation: formal_runtime_and_code
+  source_of_truth: formal_spec_and_runtime_contract
+  current_paths:
+    formal_spec: product/contracts/formal/26_RUNTIME_COMMAND_BINDING_CONTRACT_V1.md
+    runtime_instance: product/contracts/runtime/RUNTIME_COMMAND_BINDING_CONTRACT_V1.yaml
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/26_RUNTIME_COMMAND_BINDING_CONTRACT_V1.md
+    runtime_instance: product/contracts/runtime/RUNTIME_COMMAND_BINDING_CONTRACT_V1.yaml
+    data_contract: null
+  code_enforcement:
+  - product/src/core/proxy_worker_bridge.py
+  - product/src/core/sync_event_router.py
+  - product/src/orchestration/thread_specs.py
+  externalization: runtime_contract
+  notes: v33 binds proxy worker commands to safe runtime state reads, snapshots, control-method
+    state updates, parameter updates and queued safe runtime commands. Direct IO writes
+    remain disallowed.
+- contract_id: C27
+  title: Runtime Command Activation Binding
+  status: active_optional
+  classification: proxy_worker_runtime_activation_binding
+  representation: formal_runtime_and_code
+  source_of_truth: formal_spec_and_runtime_contract
+  current_paths:
+    formal_spec: product/contracts/formal/27_RUNTIME_COMMAND_ACTIVATION_BINDING_CONTRACT_V1.md
+    runtime_instance: product/contracts/runtime/RUNTIME_COMMAND_ACTIVATION_BINDING_CONTRACT_V1.yaml
+    data_contract: null
+  planned_paths:
+    formal_spec: product/contracts/formal/27_RUNTIME_COMMAND_ACTIVATION_BINDING_CONTRACT_V1.md
+    runtime_instance: product/contracts/runtime/RUNTIME_COMMAND_ACTIVATION_BINDING_CONTRACT_V1.yaml
+    data_contract: null
+  code_enforcement:
+  - product/src/core/_runtime_command_binding.py
+  - product/src/core/proxy_worker_bridge.py
+  - product/src/core/thread_management.py
+  - product/src/core/sync_event_router.py
+  externalization: runtime_contract
+  notes: v34 activates safe runtime command binding for echo, state_read, runtime_snapshot, set_control_method, parameter_update and safe_runtime_command. Direct IO writes remain disallowed.
+legacy_or_archive_candidates:
+- legacy_id: L01
+  title: Legacy Compiler Projection Runtime Bridge Summary
+  status: archived_in_v30
+  current_path: product/contracts/archive/CONTRACT_COMPILER_PROJECTION_RUNTIME_BRIDGE_V1.md
+  planned_path: product/contracts/archive/CONTRACT_COMPILER_PROJECTION_RUNTIME_BRIDGE_V1.md
+  superseded_by:
+  - C02
+  notes: Sammel-/Vorläuferdokument; nicht als aktive operative Wahrheit führen.
+- legacy_id: L02
+  title: Legacy Edge Gateway MQTT Proxy Master Summary
+  status: archived_in_v30
+  current_path: product/contracts/archive/CONTRACT_EDGE_GATEWAY_MQTT_PROXY_MASTER_V1.md
+  planned_path: product/contracts/archive/CONTRACT_EDGE_GATEWAY_MQTT_PROXY_MASTER_V1.md
+  superseded_by:
+  - C03
+  notes: Sammel-/Vorläuferdokument; aktive Linie über C03.
+- legacy_id: L03
+  title: Legacy Target JSON Chunking Distribution Worker Ownership V1
+  status: archived_in_v30
+  current_path: product/contracts/archive/CONTRACT_TARGET_JSON_CHUNKING_DISTRIBUTION_WORKER_OWNERSHIP_V1.md
+  planned_path: product/contracts/archive/CONTRACT_TARGET_JSON_CHUNKING_DISTRIBUTION_WORKER_OWNERSHIP_V1.md
+  superseded_by:
+  - C01
+  - C05
+  - C20
+  notes: Früher Chunking-/Ownership-Sammelstand; aktive Inhalte über C01/C05/C20 klassifizieren.
+- legacy_id: L04
+  title: Legacy Target JSON Chunking Distribution Worker Ownership V2
+  status: archived_in_v30
+  current_path: product/contracts/archive/CONTRACT_TARGET_JSON_CHUNKING_DISTRIBUTION_WORKER_OWNERSHIP_V2.md
+  planned_path: product/contracts/archive/CONTRACT_TARGET_JSON_CHUNKING_DISTRIBUTION_WORKER_OWNERSHIP_V2.md
+  superseded_by:
+  - C01
+  - C05
+  - C20
+  notes: Früherer V2-Sammelstand; nicht parallel als aktive Wahrheit führen.
+supporting_artifact_moves:
+- from: contracts/formal_contracts/examples
+  to: product/contracts/examples
+  status: copied_in_v30_legacy_mirror_retained
+- from: contracts/formal_contracts/matrices
+  to: product/contracts/matrices
+  status: copied_in_v30_legacy_mirror_retained
+- from: contracts/runtime_mapping
+  to: product/contracts/runtime
+  status: canonicalized_in_v30_legacy_mirror_retained
+- from: product/config/contracts
+  to: product/contracts/runtime
+  status: deprecated_mirror_in_v30
+first_data_externalization_candidates:
+- candidate_id: D01
+  title: Event Envelope Allowed Values and Field Catalog
+  current_code: product/src/libraries/_event_envelope.py
+  current_path: product/contracts/data/EVENT_ENVELOPE_CONTRACT_V1.yaml
+  keep_in_code: enrichment algorithm, vector-clock/causation handling, validation
+    flow
+- candidate_id: D02
+  title: Type Mapping Registry
+  current_code: product/src/libraries/_type_mapping_registry.py
+  current_path: product/contracts/data/TYPE_MAPPING_REGISTRY_CONTRACT_V1.yaml
+  keep_in_code: lookup functions, validation functions, default fallback handling
+- candidate_id: D03
+  title: Consistency Zones Catalog
+  current_code: product/src/libraries/_type_mapping_registry.py
+  current_path: product/contracts/data/CONSISTENCY_ZONES_CONTRACT_V1.yaml
+  keep_in_code: consistency enforcement semantics and algorithmic checks
+non_externalizable_algorithmic_contracts:
+- Merge-Algorithmen
+- Rollback-Algorithmen
+- Konflikterkennung
+- Vector-Clock-Operationen
+- Guardrail-Kaskaden
+- Apply-Limit-Entscheidungen
+- deterministische Sortierlogik
+- Reverse-Compile-Orchestrierung
+

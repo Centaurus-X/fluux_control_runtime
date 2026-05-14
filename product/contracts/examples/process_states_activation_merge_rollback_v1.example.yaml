@@ -1,0 +1,25 @@
+config_source:
+  process_states_mapping_contract_path: contracts/runtime/PROCESS_STATES_MAPPING_CONTRACT_V1.yaml
+  process_states_live_projection_enabled: true
+  process_states_live_projection_mode: apply_resolved
+  process_states_live_projection_apply_limit: 3
+  process_states_live_projection_allow_review_required: false
+
+runtime_report_example:
+  compile_projection_meta:
+    process_states_live_projection:
+      enabled: true
+      mode: apply_resolved
+      apply_limit: 3
+      mapping_contract_present: true
+      mapping_contract_ref: PSTATEMAP_CONTRACT_01
+      status: applied
+      applied_candidate_refs:
+        - PSTATECAND_01
+      skipped: []
+      conflicts: []
+      rollback_preview:
+        - candidate_ref: PSTATECAND_01
+          rollback_policy: remove_new_row
+          target_state_id: 18
+          previous_row: null

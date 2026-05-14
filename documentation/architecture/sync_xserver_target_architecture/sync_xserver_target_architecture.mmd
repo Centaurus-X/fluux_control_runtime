@@ -1,0 +1,56 @@
+flowchart TB
+    subgraph MAIN["Main Process"]
+        SW["Single-Writer<br/>HEAP — Central SoT"]
+        DS["DataStore"]
+        CS["Compiler System"]
+        MQTT["MQTT Interface"]
+        IO["IN/OUT Adapter"]
+        ER_EXT["Event-Router<br/>internal / external"]
+        DS <--> CS
+        MQTT <--> IO
+        SW -.writes.-> DS
+        IO --> ER_EXT
+        ER_EXT --> SW
+    end
+    subgraph TM["Thread Management"]
+        ER_WRK["Event-Router<br/>internal / worker"]
+    end
+    subgraph W1["Runtime Worker (Ctrl_1)"]
+        WW1["Worker-Writer<br/>Data Chunking"]
+        GRE1["Generic Rule Engine"]
+        ER_INT1["Event-Router internal"]
+        TP1["ThreadPool"]
+        AT1["Automation Thread"]
+        AA1["Automation Adapter"]
+        CT1["Controller Tasks"]
+        HW1["Hardware / Bus Adapter"]
+        TP1 <--> AT1
+        AT1 <--> AA1
+        CT1 <--> HW1
+        GRE1 --> ER_INT1
+        ER_INT1 --> WW1
+    end
+    subgraph WN["Runtime Worker (Ctrl_n)"]
+        WWN["Worker-Writer<br/>Data Chunking"]
+        GREN["Generic Rule Engine"]
+        ER_INTN["Event-Router internal"]
+        TPN["ThreadPool"]
+        ATN["Automation Thread"]
+        AAN["Automation Adapter"]
+        CTN["Controller Tasks"]
+        HWN["Hardware / Bus Adapter"]
+        TPN <--> ATN
+        ATN <--> AAN
+        CTN <--> HWN
+        GREN --> ER_INTN
+        ER_INTN --> WWN
+    end
+    MAIN --> TM
+    TM --> W1
+    TM --> WN
+    ER_EXT -->|priority dispatch| ER_WRK
+    ER_WRK -->|chunked config| W1
+    ER_WRK -->|chunked config| WN
+    WW1 -->|CONFIG_PATCH| SW
+    WWN -->|CONFIG_PATCH| SW
+    SW -.CONFIG_CHANGED.-> ER_WRK

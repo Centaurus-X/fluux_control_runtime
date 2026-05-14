@@ -1,0 +1,29 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://example.local/schemas/runtime_change_set.schema.yaml
+title: Runtime Change Set
+type: object
+required: [change_set_id, changes]
+properties:
+  change_set_id: {type: string}
+  bundle_ref: {type: string}
+  changes:
+    type: array
+    items:
+      type: object
+      required: [id, change_kind, target_ref, classification]
+      properties:
+        id: {type: string}
+        change_kind: {type: string}
+        target_ref: {type: string}
+        classification:
+          type: string
+          enum:
+            - safe_reversible
+            - requires_authoring_review
+            - runtime_local_only
+            - non_reversible_without_placeholder
+            - unsupported_future_extension
+        payload: {}
+        source_ref: {type: string}
+      additionalProperties: true
+additionalProperties: true

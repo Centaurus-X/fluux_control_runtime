@@ -1,0 +1,125 @@
+# Automatically generated dependency baseline
+# project-root: /home/philo/python-skripte_6/server_26_free_threaded_1
+# python-executable: /opt/python-nogil/current/bin/python3.14t
+# python-version: 3.14.3
+# generated-at-utc: 2026-03-22T00:01:35+00:00
+
+# Standard library imports - ignored by __auto_install_package_v2.py unless --upgrade_std is used.
+# stdlib: __future__
+# stdlib: argparse
+# stdlib: ast
+# stdlib: asyncio
+# stdlib: atexit
+# stdlib: base64
+# stdlib: collections
+# stdlib: collections.abc
+# stdlib: concurrent.futures
+# stdlib: copy
+# stdlib: ctypes
+# stdlib: datetime
+# stdlib: difflib
+# stdlib: fnmatch
+# stdlib: functools
+# stdlib: gc
+# stdlib: glob
+# stdlib: gzip
+# stdlib: hashlib
+# stdlib: hmac
+# stdlib: importlib
+# stdlib: importlib.metadata
+# stdlib: importlib.resources
+# stdlib: importlib.util
+# stdlib: inspect
+# stdlib: io
+# stdlib: ipaddress
+# stdlib: itertools
+# stdlib: json
+# stdlib: logging
+# stdlib: logging.handlers
+# stdlib: math
+# stdlib: multiprocessing
+# stdlib: os
+# stdlib: pathlib
+# stdlib: pkgutil
+# stdlib: platform
+# stdlib: pprint
+# stdlib: queue
+# stdlib: random
+# stdlib: re
+# stdlib: secrets
+# stdlib: shlex
+# stdlib: shutil
+# stdlib: signal
+# stdlib: socket
+# stdlib: ssl
+# stdlib: subprocess
+# stdlib: sys
+# stdlib: sysconfig
+# stdlib: tempfile
+# stdlib: textwrap
+# stdlib: threading
+# stdlib: time
+# stdlib: tokenize
+# stdlib: traceback
+# stdlib: tracemalloc
+# stdlib: types
+# stdlib: typing
+# stdlib: unittest
+# stdlib: urllib.parse
+# stdlib: uuid
+# stdlib: weakref
+
+# Third-party distributions
+colorama==0.4.6
+cryptography==46.0.5
+deepdiff==8.6.1
+paho-mqtt>=1.6.1,<3.0
+psutil==7.2.2
+pymodbus==3.12.1
+pytest>=7.0
+PyYAML==6.0.3
+websockets==16.0
+
+# Unresolved imports - manual package mapping may be required.
+# unresolved-import: _automation_system_interface (no automatic package mapping)
+# unresolved-import: _evt_interface (no automatic package mapping)
+# unresolved-import: _observer_interface (no automatic package mapping)
+# unresolved-import: _syncing_generic_library (no automatic package mapping)
+# unresolved-import: _type_notations (no automatic package mapping)
+# unresolved-import: caas_jupyter_tools (no automatic package mapping)
+# unresolved-import: generate_self_signed_websocket_cert (no automatic package mapping)
+# unresolved-import: json_formator (no automatic package mapping)
+# unresolved-import: json_reverse_formator (no automatic package mapping)
+# unresolved-import: pandas (no automatic package mapping)
+# unresolved-import: pkg_resources (no automatic package mapping)
+# unresolved-import: radon.complexity (no automatic package mapping)
+# unresolved-import: src (no automatic package mapping)
+# unresolved-import: src.bootstrap (no automatic package mapping)
+# unresolved-import: src.core (no automatic package mapping)
+# unresolved-import: src.core.async_event_router (no automatic package mapping)
+# unresolved-import: src.core.async_gateway_worker_client (no automatic package mapping)
+# unresolved-import: src.core.async_process_state_management (no automatic package mapping)
+# unresolved-import: src.core.async_state_event_management (no automatic package mapping)
+# unresolved-import: src.core.async_thread_management (no automatic package mapping)
+# unresolved-import: src.core.async_websockets_server (no automatic package mapping)
+# unresolved-import: src.core.async_worker_datastore (no automatic package mapping)
+# unresolved-import: src.core.cpu_probe (no automatic package mapping)
+# unresolved-import: src.libraries (no automatic package mapping)
+# unresolved-import: src.libraries._app_config_runtime (no automatic package mapping)
+# unresolved-import: src.libraries._ascii_plotter (no automatic package mapping)
+# unresolved-import: src.libraries._automation_system_interface (no automatic package mapping)
+# unresolved-import: src.libraries._client_data_ui_config_manager (no automatic package mapping)
+# unresolved-import: src.libraries._evt_interface (no automatic package mapping)
+# unresolved-import: src.libraries._json_formator (no automatic package mapping)
+# unresolved-import: src.libraries._metrics_system (no automatic package mapping)
+# unresolved-import: src.libraries._observer_interface (no automatic package mapping)
+# unresolved-import: src.libraries._syncing_generic_library (no automatic package mapping)
+# unresolved-import: src.libraries._system_init (no automatic package mapping)
+# unresolved-import: src.libraries._thread_pool (no automatic package mapping)
+# unresolved-import: src.libraries._type_dynamics (no automatic package mapping)
+# unresolved-import: src.libraries._type_notations (no automatic package mapping)
+# unresolved-import: src.libraries._websocket_interface_standard (no automatic package mapping)
+# unresolved-import: src.libraries.generate_self_signed_websocket_cert (no automatic package mapping)
+# unresolved-import: src.libraries.generate_ssl_certs (no automatic package mapping)
+# unresolved-import: src.libraries.ws_tls_common (no automatic package mapping)
+# unresolved-import: ws_tls_common (no automatic package mapping)

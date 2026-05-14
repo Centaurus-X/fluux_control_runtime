@@ -1,0 +1,89 @@
+coordination_edges:
+- edge_type: uses_physical_context
+  id: EDGE_LDC_TO_POC_A
+  source_ref: LDC_REACTOR_A_MAIN
+  target_ref: POC_WAGO_A
+- edge_type: uses_physical_context
+  id: EDGE_LDC_TO_POC_B
+  source_ref: LDC_REACTOR_A_MAIN
+  target_ref: POC_WAGO_B
+logical_domain_contexts:
+- domain_ref: LDC_REACTOR_A_MAIN
+  fsm_refs:
+  - FSM_HEAT_LOOP
+  id: LDC_REACTOR_A_MAIN
+  mode: single_writer_commit
+  parameter_set_refs:
+  - PS_REACTOR_HEAT_DEFAULT
+  physical_owner_context_refs:
+  - POC_WAGO_A
+  - POC_WAGO_B
+  rule_refs:
+  - RULE_CONTROL_HEAT_PID
+  - RULE_FSM_START
+  - RULE_GUARD_PRESSURE_HIGH
+  - RULE_NOTIFY_HEAT_READY
+  - RULE_SAFETY_ESTOP
+  - RULE_SEQUENCE_COOLING_SUPPORT
+  signal_refs:
+  - SIG_REACTOR_COOLING_VALVE_CV
+  - SIG_REACTOR_ESTOP
+  - SIG_REACTOR_HEATER_CV
+  - SIG_REACTOR_PRESS_PV
+  - SIG_REACTOR_TEMP_PV
+  - SIG_REACTOR_TEMP_SP
+  timer_refs:
+  - TMR_ESTOP_FAST
+  - TMR_SCAN_100MS
+ownership_index:
+  domains:
+    LDC_REACTOR_A_MAIN: LDC_REACTOR_A_MAIN
+  points:
+    POINT_COOLING_VALVE_CV_RAW: POC_WAGO_B
+    POINT_ESTOP_RAW: POC_WAGO_B
+    POINT_HEATER_CV_RAW: POC_WAGO_A
+    POINT_PRESS_PV_RAW: POC_WAGO_A
+    POINT_TEMP_PV_RAW: POC_WAGO_A
+  rules:
+    RULE_CONTROL_HEAT_PID: LDC_REACTOR_A_MAIN
+    RULE_FSM_START: LDC_REACTOR_A_MAIN
+    RULE_GUARD_PRESSURE_HIGH: LDC_REACTOR_A_MAIN
+    RULE_NOTIFY_HEAT_READY: LDC_REACTOR_A_MAIN
+    RULE_SAFETY_ESTOP: LDC_REACTOR_A_MAIN
+    RULE_SEQUENCE_COOLING_SUPPORT: LDC_REACTOR_A_MAIN
+  signals:
+    SIG_REACTOR_COOLING_VALVE_CV: LDC_REACTOR_A_MAIN
+    SIG_REACTOR_ESTOP: LDC_REACTOR_A_MAIN
+    SIG_REACTOR_HEATER_CV: LDC_REACTOR_A_MAIN
+    SIG_REACTOR_PRESS_PV: LDC_REACTOR_A_MAIN
+    SIG_REACTOR_TEMP_PV: LDC_REACTOR_A_MAIN
+    SIG_REACTOR_TEMP_SP: LDC_REACTOR_A_MAIN
+partition_id: PARTITION_be40331f759f7a8d
+physical_owner_contexts:
+- asset_refs:
+  - CHAN_HEATER_AO_01
+  - CHAN_PRESS_AI_01
+  - CHAN_TEMP_AI_01
+  - CTRL_WAGO_A
+  capabilities:
+    egress: true
+    ingress: true
+  id: POC_WAGO_A
+  name: Physical Owner Context WAGO A
+  point_refs:
+  - POINT_HEATER_CV_RAW
+  - POINT_PRESS_PV_RAW
+  - POINT_TEMP_PV_RAW
+- asset_refs:
+  - CHAN_COOL_VALVE_AO_01
+  - CHAN_ESTOP_DI_01
+  - CTRL_WAGO_B
+  capabilities:
+    egress: true
+    ingress: true
+  id: POC_WAGO_B
+  name: Physical Owner Context WAGO B
+  point_refs:
+  - POINT_COOLING_VALVE_CV_RAW
+  - POINT_ESTOP_RAW
+source_cud_hash: 9bc912ab8c151381cac7847a6174e052b8a83a62c07658173380d46a4147c737

@@ -1,0 +1,102 @@
+schema_version: 1
+contract_id: C19
+data_contract_id: TYPE_MAPPING_REGISTRY_CONTRACT_V1
+status: externalized_reference
+runtime_loaded: false
+code_source: product/src/libraries/_type_mapping_registry.py
+formal_spec: product/contracts/formal/19_TYPE_MAPPING_REGISTRY_CONTRACT_V1.md
+intent: Datenartige Referenz der Writer-Ownership-Registry. Lookup, Validierung und Enforcement-nahe Semantik bleiben im Code.
+contract_version_in_code: 2
+writers:
+  - cud_compiler
+  - worker_datastore
+  - system_event_management
+  - worker_local
+  - edge_gateway
+  - runtime_change_capture
+scopes:
+  - config_file
+  - projection_patch
+  - runtime_hot_state
+  - event_queue
+  - change_set_file
+  - decompiled_file
+registry:
+  device_state_data_json:
+    primary_writer: worker_datastore
+    scope: config_file
+    consistency_zone: strict
+    notes: Der Datastore ist Single-Writer fuer config/___device_state_data.json.
+  projection_bundle:
+    primary_writer: cud_compiler
+    scope: projection_patch
+    consistency_zone: strict
+    notes: Der CUD-Compiler erzeugt den gesamten Projection-Bundle inkl. Sidecars.
+  runtime_json_kernel_patch:
+    primary_writer: cud_compiler
+    scope: projection_patch
+    consistency_zone: strict
+  process_states_live_projection_patch:
+    primary_writer: cud_compiler
+    scope: projection_patch
+    consistency_zone: strict
+    notes: Live-Projection fuer process_states.
+  control_methods_live_projection_patch:
+    primary_writer: cud_compiler
+    scope: projection_patch
+    consistency_zone: strict
+    notes: Live-Projection fuer control_methods.
+  worker_hot_state:
+    primary_writer: worker_local
+    scope: runtime_hot_state
+    consistency_zone: strict
+    notes: Jeder Worker schreibt nur seinen eigenen Hot-State.
+  cross_worker_event:
+    primary_writer: system_event_management
+    scope: event_queue
+    consistency_zone: causal
+    notes: SEM ist Single-Writer fuer alle Events, die Worker-Grenzen ueberschreiten.
+  local_worker_event:
+    primary_writer: worker_local
+    scope: event_queue
+    consistency_zone: causal
+    notes: Worker-interne Events bleiben lokal, kein SEM-Durchlauf.
+  runtime_change_set:
+    primary_writer: runtime_change_capture
+    scope: change_set_file
+    consistency_zone: causal
+    notes: Der Capture-Producer schreibt Change-Sets in config/runtime_change_sets/.
+  reverse_compile_output:
+    primary_writer: cud_compiler
+    scope: decompiled_file
+    consistency_zone: eventual
+    notes: Der Reverse-Compile-Consumer ruft den CUD-Compiler-Adapter, der die Datei erzeugt.
+  edge_inbound_telemetry:
+    primary_writer: edge_gateway
+    scope: event_queue
+    consistency_zone: eventual
+    notes: Nur Edge-Gateway schreibt eingehende Telemetrie.
+  ha_heartbeat:
+    primary_writer: worker_local
+    scope: event_queue
+    consistency_zone: causal
+    notes: Hot-Standby-Heartbeat zwischen Nodes; kausal konsistent ueber term und vector_clock.
+  raft_log_entry:
+    primary_writer: worker_local
+    scope: event_queue
+    consistency_zone: strict
+    notes: Raft-Log-Eintraege; strikt konsistent via Quorum-Commit.
+  federated_event:
+    primary_writer: worker_local
+    scope: event_queue
+    consistency_zone: eventual
+    notes: Cross-Site-Events via Federation-Bridge; eventual konsistent ueber Site-Grenzen.
+code_retained_behaviour:
+  - lookup_primary_writer
+  - lookup_entry
+  - lookup_consistency_zone
+  - list_types_by_writer
+  - list_types_by_scope
+  - list_types_by_consistency_zone
+  - validate_registry
+  - describe_registry

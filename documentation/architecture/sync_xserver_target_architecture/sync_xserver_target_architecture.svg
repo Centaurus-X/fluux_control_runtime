@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="760" viewBox="0 0 960 760" font-family="system-ui, sans-serif" font-size="12">
+<defs>
+<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M2 1 L9 5 L2 9" fill="none" stroke="#444" stroke-width="1.5"/>
+</marker>
+</defs>
+<style>
+.box{fill:#E6F1FB;stroke:#185FA5;stroke-width:1}
+.main{fill:#F7FAFE;stroke:#185FA5;stroke-width:1.5}
+.tm{fill:#EEEDFE;stroke:#534AB7;stroke-width:1.5}
+.wrk{fill:#E1F5EE;stroke:#0F6E56;stroke-width:1.5}
+.wbox{fill:#FFFFFF;stroke:#0F6E56}
+.writer{fill:#FAEEDA;stroke:#854F0B;stroke-width:1}
+.sw{fill:#FBEAF0;stroke:#993556;stroke-width:1.5}
+.ad{fill:#F1EFE8;stroke:#5F5E5A}
+.t{font-weight:600;fill:#0C447C}
+.label{font-size:11px;fill:#444}
+</style>
+<rect class="main" x="20" y="20" width="920" height="200" rx="10"/>
+<text class="t" x="40" y="45" font-size="14">Main Process</text>
+<rect class="sw" x="50" y="70" width="190" height="55" rx="6"/>
+<text class="t" x="145" y="92" text-anchor="middle">Single-Writer</text>
+<text class="label" x="145" y="110" text-anchor="middle">HEAP — Central SoT</text>
+<rect class="box" x="270" y="70" width="130" height="55" rx="6"/>
+<text class="t" x="335" y="102" text-anchor="middle">DataStore</text>
+<rect class="box" x="420" y="70" width="140" height="55" rx="6"/>
+<text class="t" x="490" y="102" text-anchor="middle">Compiler System</text>
+<rect class="box" x="590" y="70" width="140" height="55" rx="6"/>
+<text class="t" x="660" y="102" text-anchor="middle">MQTT Interface</text>
+<rect class="box" x="760" y="70" width="150" height="55" rx="6"/>
+<text class="t" x="835" y="102" text-anchor="middle">IN / OUT Adapter</text>
+<rect class="box" x="340" y="150" width="280" height="45" rx="6"/>
+<text class="t" x="480" y="178" text-anchor="middle">Event-Router (internal / external)</text>
+<line x1="400" y1="97" x2="420" y2="97" stroke="#444" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<line x1="730" y1="97" x2="760" y2="97" stroke="#444" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<line x1="835" y1="125" x2="600" y2="150" stroke="#444" marker-end="url(#arr)"/>
+<line x1="400" y1="172" x2="240" y2="110" stroke="#444" marker-end="url(#arr)"/>
+<line x1="145" y1="125" x2="270" y2="90" stroke="#444" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+<rect class="tm" x="20" y="240" width="920" height="70" rx="10"/>
+<text class="t" x="40" y="265" font-size="14" fill="#3C3489">Thread Management</text>
+<rect x="370" y="265" width="220" height="32" rx="6" fill="#EEEDFE" stroke="#534AB7"/>
+<text class="t" x="480" y="285" text-anchor="middle" fill="#3C3489">Event-Router (internal / worker)</text>
+<line x1="480" y1="195" x2="480" y2="265" stroke="#534AB7" stroke-width="2" marker-end="url(#arr)"/>
+<text class="label" x="500" y="230">priority dispatch</text>
+<g>
+<rect class="wrk" x="20" y="330" width="445" height="410" rx="10"/>
+<text class="t" x="40" y="355" font-size="14" fill="#085041">Runtime Worker (Ctrl_1)</text>
+<rect class="writer" x="40" y="375" width="200" height="45" rx="6"/>
+<text class="t" x="140" y="402" text-anchor="middle" fill="#633806">Worker-Writer (Chunk)</text>
+<rect class="wbox" x="260" y="375" width="180" height="45" rx="6"/>
+<text class="t" x="350" y="402" text-anchor="middle" fill="#085041">Generic Rule Engine</text>
+<rect class="wbox" x="40" y="440" width="400" height="40" rx="6"/>
+<text class="t" x="240" y="465" text-anchor="middle" fill="#085041">Event-Router (internal)</text>
+<rect class="wbox" x="40" y="500" width="120" height="45" rx="6"/>
+<text class="t" x="100" y="527" text-anchor="middle" fill="#085041">ThreadPool</text>
+<rect class="wbox" x="175" y="500" width="120" height="45" rx="6"/>
+<text class="t" x="235" y="527" text-anchor="middle" fill="#085041">Automation Thread</text>
+<rect class="ad" x="310" y="500" width="130" height="45" rx="6"/>
+<text class="t" x="375" y="527" text-anchor="middle" fill="#2C2C2A">Automation Adapter</text>
+<rect class="wbox" x="40" y="570" width="180" height="45" rx="6"/>
+<text class="t" x="130" y="597" text-anchor="middle" fill="#085041">Controller Tasks</text>
+<rect class="ad" x="240" y="570" width="200" height="45" rx="6"/>
+<text class="t" x="340" y="597" text-anchor="middle" fill="#2C2C2A">Hardware / Bus Adapter</text>
+<line x1="160" y1="522" x2="175" y2="522" stroke="#444" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<line x1="295" y1="522" x2="310" y2="522" stroke="#444" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<line x1="220" y1="592" x2="240" y2="592" stroke="#444" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<line x1="350" y1="420" x2="240" y2="440" stroke="#444" marker-end="url(#arr)"/>
+<line x1="240" y1="480" x2="140" y2="420" stroke="#444" marker-end="url(#arr)"/>
+</g>
+<g transform="translate(495,0)">
+<rect class="wrk" x="0" y="330" width="445" height="410" rx="10"/>
+<text class="t" x="20" y="355" font-size="14" fill="#085041">Runtime Worker (Ctrl_n)</text>
+<rect class="writer" x="20" y="375" width="200" height="45" rx="6"/>
+<text class="t" x="120" y="402" text-anchor="middle" fill="#633806">Worker-Writer (Chunk)</text>
+<rect class="wbox" x="240" y="375" width="180" height="45" rx="6"/>
+<text class="t" x="330" y="402" text-anchor="middle" fill="#085041">Generic Rule Engine</text>
+<rect class="wbox" x="20" y="440" width="400" height="40" rx="6"/>
+<text class="t" x="220" y="465" text-anchor="middle" fill="#085041">Event-Router (internal)</text>
+<rect class="wbox" x="20" y="500" width="120" height="45" rx="6"/>
+<text class="t" x="80" y="527" text-anchor="middle" fill="#085041">ThreadPool</text>
+<rect class="wbox" x="155" y="500" width="120" height="45" rx="6"/>
+<text class="t" x="215" y="527" text-anchor="middle" fill="#085041">Automation Thread</text>
+<rect class="ad" x="290" y="500" width="130" height="45" rx="6"/>
+<text class="t" x="355" y="527" text-anchor="middle" fill="#2C2C2A">Automation Adapter</text>
+<rect class="wbox" x="20" y="570" width="180" height="45" rx="6"/>
+<text class="t" x="110" y="597" text-anchor="middle" fill="#085041">Controller Tasks</text>
+<rect class="ad" x="220" y="570" width="200" height="45" rx="6"/>
+<text class="t" x="320" y="597" text-anchor="middle" fill="#2C2C2A">Hardware / Bus Adapter</text>
+<line x1="140" y1="522" x2="155" y2="522" stroke="#444" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<line x1="275" y1="522" x2="290" y2="522" stroke="#444" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<line x1="200" y1="592" x2="220" y2="592" stroke="#444" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<line x1="330" y1="420" x2="220" y2="440" stroke="#444" marker-end="url(#arr)"/>
+<line x1="220" y1="480" x2="120" y2="420" stroke="#444" marker-end="url(#arr)"/>
+</g>
+<line x1="370" y1="297" x2="240" y2="330" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="590" y1="297" x2="720" y2="330" stroke="#534AB7" stroke-width="1.5" marker-end="url(#arr)"/>
+<text class="label" x="290" y="320" fill="#3C3489">chunked config</text>
+<text class="label" x="640" y="320" fill="#3C3489">chunked config</text>
+<path d="M 140 375 Q 140 240 145 125" fill="none" stroke="#993556" stroke-width="1.5" marker-end="url(#arr)"/>
+<path d="M 615 375 Q 615 240 240 110" fill="none" stroke="#993556" stroke-width="1.5" marker-end="url(#arr)"/>
+<text class="label" x="155" y="245" fill="#993556">CONFIG_PATCH</text>
+<path d="M 200 100 Q 20 240 480 265" fill="none" stroke="#534AB7" stroke-dasharray="5 3" stroke-width="1.5" marker-end="url(#arr)"/>
+<text class="label" x="30" y="230" fill="#534AB7">CONFIG_CHANGED</text>
+</svg>
