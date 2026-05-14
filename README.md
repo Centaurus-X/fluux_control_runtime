@@ -15,6 +15,18 @@ The root contains the runtime source tree plus installers, service templates, re
 
 Do not publish `_private/`. It is local-only development history and is excluded by `.gitignore`.
 
+
+## Architecture
+
+![Sync XServer Target Architecture](documentation/architecture/sync_xserver_target_architecture/sync_xserver_target_architecture.svg)
+
+Additional architecture artifacts:
+
+- [Architecture documentation](documentation/architecture/sync_xserver_target_architecture/README.md)
+- [Mermaid source](documentation/architecture/sync_xserver_target_architecture/sync_xserver_target_architecture.mmd)
+- [HTML architecture viewer](documentation/architecture/sync_xserver_target_architecture/sync_xserver_target_architecture.html)
+
+
 ## Honest release status
 
 The current integration state is production-like and functionally green. It is ready for a controlled production test, pilot run or pre-production deployment.
@@ -104,3 +116,4 @@ GPL-3.0-or-later OR Commercial License
 ```
 
 See `LICENSE.md` and `COMMERCIAL_LICENSE.md`.
+
