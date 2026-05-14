@@ -20,6 +20,12 @@ Do not publish `_private/`. It is local-only development history and is excluded
 
 ![Sync XServer Target Architecture](documentation/architecture/sync_xserver_target_architecture/sync_xserver_target_architecture.svg)
 
+![Sync XServer Target Architecture](documentation/architecture/sync_xserver_target_architecture/runtime_v34_3_gesamtarchitektur.svg)
+
+![Sync XServer Target Architecture](documentation/architecture/sync_xserver_target_architecture/threadmanagement_architektur.svg)
+
+
+
 Additional architecture artifacts:
 
 - [Architecture documentation](documentation/architecture/sync_xserver_target_architecture/README.md)
