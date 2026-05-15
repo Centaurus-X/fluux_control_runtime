@@ -2,18 +2,11 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-<<<<<<< HEAD
-RUNTIME_ROOT="${RUNTIME_ROOT:-/opt/projektstand_v34_3_preproduction_final_runtime}"
-SERVICE_NAME="${SERVICE_NAME:-product-runtime-v34-3.service}"
-RUNTIME_USER="${RUNTIME_USER:-${USER}}"
-RUNTIME_PYTHON_OVERRIDE="${RUNTIME_PYTHON:-}"
-=======
 RUNTIME_ROOT="${RUNTIME_ROOT:-/opt/projektstand_v35_1_preproduction_final_runtime}"
 SERVICE_NAME="${SERVICE_NAME:-product-runtime-v35-1.service}"
 RUNTIME_USER="${RUNTIME_USER:-${USER}}"
 RUNTIME_PYTHON_OVERRIDE="${RUNTIME_PYTHON:-}"
 ENVIRONMENT_FILE="${ENVIRONMENT_FILE:-/etc/default/product-runtime-v35-1}"
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -21,29 +14,17 @@ while [ $# -gt 0 ]; do
     --service-name) SERVICE_NAME="$2"; shift 2 ;;
     --runtime-user) RUNTIME_USER="$2"; shift 2 ;;
     --runtime-python) RUNTIME_PYTHON_OVERRIDE="$2"; shift 2 ;;
-<<<<<<< HEAD
-=======
     --environment-file) ENVIRONMENT_FILE="$2"; shift 2 ;;
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     *) printf 'Unknown argument: %s\n' "$1" >&2; exit 2 ;;
   esac
 done
 
 if [ -n "$RUNTIME_PYTHON_OVERRIDE" ]; then
   RUNTIME_PYTHON="$RUNTIME_PYTHON_OVERRIDE"
-<<<<<<< HEAD
-elif [ -x "${RUNTIME_ROOT}/.venv-runtime-v34_3/bin/python" ]; then
-  RUNTIME_PYTHON="${RUNTIME_ROOT}/.venv-runtime-v34_3/bin/python"
-elif [ -x "${RUNTIME_ROOT}/.venv-runtime-v34_2/bin/python" ]; then
-  RUNTIME_PYTHON="${RUNTIME_ROOT}/.venv-runtime-v34_2/bin/python"
-else
-  RUNTIME_PYTHON="${RUNTIME_ROOT}/.venv-runtime-v34_1/bin/python"
-=======
 elif [ -x "${RUNTIME_ROOT}/.venv-runtime-v35_1/bin/python" ]; then
   RUNTIME_PYTHON="${RUNTIME_ROOT}/.venv-runtime-v35_1/bin/python"
 else
   RUNTIME_PYTHON="${RUNTIME_ROOT}/.venv-runtime-v35_1/bin/python"
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 fi
 
 if [ ! -x "$RUNTIME_PYTHON" ]; then
@@ -60,8 +41,6 @@ sudo mkdir -p "${RUNTIME_ROOT}/product/logs/system_logs"
 sudo touch "${RUNTIME_ROOT}/product/logs/system_logs/system.log"
 sudo chown -R "${RUNTIME_USER}:${RUNTIME_USER}" "${RUNTIME_ROOT}/product/logs"
 
-<<<<<<< HEAD
-=======
 sudo mkdir -p "$(dirname "$ENVIRONMENT_FILE")"
 if [ ! -f "$ENVIRONMENT_FILE" ]; then
   sudo tee "$ENVIRONMENT_FILE" >/dev/null <<'EOF'
@@ -72,18 +51,13 @@ EOF
   sudo chmod 0640 "$ENVIRONMENT_FILE"
 fi
 
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 pkill -f 'src/sync_xserver_main.py' 2>/dev/null || true
 pkill -f 'sync_xserver_main.py' 2>/dev/null || true
 
 UNIT_PATH="/etc/systemd/system/${SERVICE_NAME}"
 sudo tee "$UNIT_PATH" >/dev/null <<EOF
 [Unit]
-<<<<<<< HEAD
-Description=Product Runtime v34.3 Preproduction Worker fn01
-=======
 Description=Product Runtime v35.1 Preproduction Worker fn01
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 After=network-online.target
 Wants=network-online.target
 
@@ -93,21 +67,15 @@ User=${RUNTIME_USER}
 WorkingDirectory=${RUNTIME_ROOT}/product
 Environment=PYTHONDONTWRITEBYTECODE=1
 Environment=PYTHONUNBUFFERED=1
-<<<<<<< HEAD
-=======
 EnvironmentFile=-${ENVIRONMENT_FILE}
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 ExecStart=${RUNTIME_PYTHON} ${RUNTIME_ROOT}/product/src/sync_xserver_main.py
 Restart=on-failure
 RestartSec=5
 KillSignal=SIGINT
 TimeoutStopSec=30
-<<<<<<< HEAD
-=======
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=product-runtime-v35-1
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
 [Install]
 WantedBy=multi-user.target

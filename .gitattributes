@@ -1,4 +1,4 @@
-﻿# Normalize text files and keep Linux/runtime-critical files with LF endings.
+# Normalize text files and keep Linux/runtime-critical files with LF endings.
 * text=auto
 
 *.py text eol=lf

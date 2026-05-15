@@ -1,11 +1,7 @@
 schema_version: 1
 registry_id: CONTRACT_REGISTRY_V1
 status: active_runtime_resolved
-<<<<<<< HEAD
-product_release_target: v34_preproduction_final_runtime
-=======
 product_release_target: v35_1_preproduction_final_runtime
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 canonical_contract_root: product/contracts
 intent: Single Source of Truth fuer Sichtbarkeit, Klassifizierung und Verknuepfung
   der Vertragslandschaft.
@@ -30,14 +26,9 @@ runtime_resolution:
   runtime_contract_ids:
     process_states_mapping: C08
     control_methods_mapping: C17
-<<<<<<< HEAD
-    proxy_worker_bridge: C26
-    runtime_command_binding: C27
-=======
     proxy_worker_bridge: C25
     runtime_command_binding: C26
     runtime_command_activation_binding: C27
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
   rule: app_config selects Contract-IDs only; concrete runtime_instance paths are
     resolved from this registry.
 representation_values:
@@ -55,15 +46,9 @@ global_rules:
 - product/config bleibt fuer operative Instanzkonfiguration, nicht fuer normative
   Spezifikation.
 - runtime_mapping YAMLs sind kanonisch unter product/contracts/runtime.
-<<<<<<< HEAD
-- v31 Runtime-Komponenten duerfen operative Contract-Dateipfade nicht mehr aus app_config
-  ableiten, sondern muessen Contract-IDs ueber diese Registry aufloesen.
-- product/config/contracts ist in v31 aus dem Produkt entfernt; verbleibende historische
-=======
 - v35.1 Runtime-Komponenten duerfen operative Contract-Dateipfade nicht mehr aus app_config
   ableiten, sondern muessen Contract-IDs ueber diese Registry aufloesen.
 - product/config/contracts ist seit v31 aus dem Produkt entfernt; verbleibende historische
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
   Kopien ausserhalb von product sind nicht kanonisch.
 - Algorithmen bleiben Code; nur datenartige Vertragsbestandteile werden externalisiert.
 - contract_registry.yaml ist Register und Verknuepfungsschicht, nicht selbst der Algorithmus.
@@ -552,11 +537,7 @@ entries:
   notes: Optionale föderierte Verteilung; Eventual Consistency am Rand, nicht im Worker-Kern.
 - contract_id: C25
   title: Proxy Worker Bridge
-<<<<<<< HEAD
-  status: superseded_by_C26
-=======
   status: active_compatibility_runtime
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
   classification: edge_gateway_worker_binding
   representation: formal_runtime_and_code
   source_of_truth: formal_spec_and_runtime_contract
@@ -573,13 +554,8 @@ entries:
   - product/src/orchestration/runtime_config.py
   - product/src/orchestration/thread_specs.py
   externalization: runtime_contract
-<<<<<<< HEAD
-  notes: v32 bridge contract; superseded by C26 in v33 pre-production runtime command
-    binding.
-=======
   notes: v35.1 keeps the proxy bridge transport contract active while runtime command
     semantics are governed by C26/C27.
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 - contract_id: C26
   title: Runtime Command Binding
   status: active_optional
@@ -599,11 +575,7 @@ entries:
   - product/src/core/sync_event_router.py
   - product/src/orchestration/thread_specs.py
   externalization: runtime_contract
-<<<<<<< HEAD
-  notes: v33 binds proxy worker commands to safe runtime state reads, snapshots, control-method
-=======
   notes: v35.1 binds proxy worker commands to safe runtime state reads, snapshots, control-method
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     state updates, parameter updates and queued safe runtime commands. Direct IO writes
     remain disallowed.
 - contract_id: C27
@@ -626,11 +598,7 @@ entries:
   - product/src/core/thread_management.py
   - product/src/core/sync_event_router.py
   externalization: runtime_contract
-<<<<<<< HEAD
-  notes: v34 activates safe runtime command binding for echo, state_read, runtime_snapshot, set_control_method, parameter_update and safe_runtime_command. Direct IO writes remain disallowed.
-=======
   notes: v35.1 keeps safe runtime command binding active for echo, state_read, runtime_snapshot, set_control_method, parameter_update and safe_runtime_command. Direct IO writes remain disallowed.
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 legacy_or_archive_candidates:
 - legacy_id: L01
   title: Legacy Compiler Projection Runtime Bridge Summary

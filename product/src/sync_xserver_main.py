@@ -37,10 +37,7 @@ from src.orchestration.thread_specs import (
     build_default_shutdown_queue_names,
 )
 from src.orchestration.shutdown import shutdown_runtime
-<<<<<<< HEAD
-=======
 from src.orchestration.runtime_health import maybe_write_runtime_health_snapshot
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
 
 logger = logging.getLogger(__name__)
@@ -114,11 +111,6 @@ def main():
         logger=logger,
     )
 
-<<<<<<< HEAD
-    try:
-        logger.info("[main] Starting managed threads")
-        start_threads(thread_entries, logger=logger)
-=======
     health_state = {}
 
     try:
@@ -133,7 +125,6 @@ def main():
             status="running",
             logger=logger,
         )
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
         if runtime_bundle["settings"]["system"]["log_level_test"]:
             log_level_test = runtime_bundle.get("interfaces", {}).get("log_level_test")
@@ -142,8 +133,6 @@ def main():
 
         while not runtime_state["shutdown_event"].is_set():
             reload_runtime_bundle(runtime_bundle, logger=logger)
-<<<<<<< HEAD
-=======
             maybe_write_runtime_health_snapshot(
                 runtime_bundle,
                 runtime_state,
@@ -153,7 +142,6 @@ def main():
                 status="running",
                 logger=logger,
             )
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
             runtime_cfg_sleep(runtime_bundle, "timing.main_loop_sleep_s", 5.0)
 
     except KeyboardInterrupt:
@@ -166,8 +154,6 @@ def main():
 
     finally:
         logger.info("[main] Starting coordinated shutdown")
-<<<<<<< HEAD
-=======
         maybe_write_runtime_health_snapshot(
             runtime_bundle,
             runtime_state,
@@ -177,7 +163,6 @@ def main():
             status="shutdown_started",
             logger=logger,
         )
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
         shutdown_settings = runtime_bundle["settings"]["shutdown"]
         automation_shutdown_fn = component_targets.get("shutdown_automation_executor")
@@ -202,8 +187,6 @@ def main():
             extra_threads=(cpu_probe_thread,),
         )
 
-<<<<<<< HEAD
-=======
         maybe_write_runtime_health_snapshot(
             runtime_bundle,
             runtime_state,
@@ -213,7 +196,6 @@ def main():
             status="shutdown_complete",
             logger=logger,
         )
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         logger.info("[main] Shutdown complete")
 
 

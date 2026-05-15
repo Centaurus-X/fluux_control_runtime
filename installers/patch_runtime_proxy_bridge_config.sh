@@ -2,21 +2,12 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-<<<<<<< HEAD
-RUNTIME_ROOT="${RUNTIME_ROOT:-/opt/projektstand_v34_3_preproduction_final_runtime}"
-=======
 RUNTIME_ROOT="${RUNTIME_ROOT:-/opt/projektstand_v35_1_preproduction_final_runtime}"
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 BROKER_HOST="${BROKER_HOST:-192.168.0.31}"
 BROKER_PORT="${BROKER_PORT:-1883}"
 SECURE_PORT="${SECURE_PORT:-8883}"
 WORKER_ID="${WORKER_ID:-worker_fn_01}"
 NODE_ID="${NODE_ID:-fn-01}"
-<<<<<<< HEAD
-CLIENT_ID="${CLIENT_ID:-v34-worker-worker_fn_01}"
-CA_CERT_FILE="${CA_CERT_FILE:-config/ssl/certs/mqtt/emqx-root-ca.pem}"
-BINDING_VERSION="${BINDING_VERSION:-v34_preproduction_final_runtime}"
-=======
 CLIENT_ID="${CLIENT_ID:-v35-1-worker-worker_fn_01}"
 CA_CERT_FILE="${CA_CERT_FILE:-config/ssl/certs/mqtt/emqx-root-ca.pem}"
 AUTH_REQUIRED="${AUTH_REQUIRED:-false}"
@@ -29,7 +20,6 @@ ACL_ENFORCEMENT="${ACL_ENFORCEMENT:-true}"
 ACL_DEFAULT_POLICY="${ACL_DEFAULT_POLICY:-deny}"
 BINDING_VERSION="${BINDING_VERSION:-v35_1_preproduction_final_runtime}"
 HEALTH_PATH="${HEALTH_PATH:-logs/system_logs/runtime_health.json}"
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -41,9 +31,6 @@ while [ $# -gt 0 ]; do
     --node-id) NODE_ID="$2"; shift 2 ;;
     --client-id) CLIENT_ID="$2"; shift 2 ;;
     --ca-cert-file) CA_CERT_FILE="$2"; shift 2 ;;
-<<<<<<< HEAD
-    --binding-version) BINDING_VERSION="$2"; shift 2 ;;
-=======
     --auth-required) AUTH_REQUIRED="$2"; shift 2 ;;
     --username-env) USERNAME_ENV="$2"; shift 2 ;;
     --password-env) PASSWORD_ENV="$2"; shift 2 ;;
@@ -54,7 +41,6 @@ while [ $# -gt 0 ]; do
     --acl-default-policy) ACL_DEFAULT_POLICY="$2"; shift 2 ;;
     --binding-version) BINDING_VERSION="$2"; shift 2 ;;
     --health-path) HEALTH_PATH="$2"; shift 2 ;;
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     *) printf 'Unknown argument: %s\n' "$1" >&2; exit 2 ;;
   esac
 done
@@ -65,33 +51,23 @@ if [ ! -f "$CONFIG_PATH" ]; then
   exit 1
 fi
 
-<<<<<<< HEAD
-export CONFIG_PATH BROKER_HOST BROKER_PORT SECURE_PORT WORKER_ID NODE_ID CLIENT_ID CA_CERT_FILE BINDING_VERSION
-python - <<'PY'
-=======
 export CONFIG_PATH BROKER_HOST BROKER_PORT SECURE_PORT WORKER_ID NODE_ID CLIENT_ID CA_CERT_FILE AUTH_REQUIRED USERNAME_ENV PASSWORD_ENV MTLS_MODE CERT_ROTATION_ENABLED CERT_RENEW_BEFORE_DAYS ACL_ENFORCEMENT ACL_DEFAULT_POLICY BINDING_VERSION HEALTH_PATH
 python3 - <<'PY'
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 from pathlib import Path
 import os
 import yaml
 
-<<<<<<< HEAD
-=======
 
 def as_bool(value):
     return str(value).strip().lower() in ("1", "true", "yes", "on", "enabled")
 
 
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 config_path = Path(os.environ["CONFIG_PATH"])
 data = yaml.safe_load(config_path.read_text(encoding="utf-8"))
 
 base = data.setdefault("base", {})
 app = base.setdefault("app", {})
 bridge = base.setdefault("proxy_worker_bridge", {})
-<<<<<<< HEAD
-=======
 security = base.setdefault("security", {})
 security_mqtt = security.setdefault("mqtt", {})
 security_pki = security.setdefault("pki", {})
@@ -100,7 +76,6 @@ health = monitoring.setdefault("health", {})
 alerting = monitoring.setdefault("alerting", {})
 fieldbus = base.setdefault("fieldbus", {})
 runtime_profile = fieldbus.setdefault("runtime_profile", {})
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 network = base.setdefault("network", {})
 mqtt_client = network.setdefault("mqtt_client", {})
 
@@ -118,11 +93,6 @@ bridge["client_key_file"] = None
 bridge["tls_ciphers"] = None
 bridge["tls_allow_insecure"] = False
 bridge["check_hostname"] = True
-<<<<<<< HEAD
-bridge["username"] = None
-bridge["password"] = None
-bridge["client_id"] = os.environ["CLIENT_ID"]
-=======
 bridge["authentication_required"] = as_bool(os.environ["AUTH_REQUIRED"])
 bridge["username"] = None
 bridge["password"] = None
@@ -141,7 +111,6 @@ bridge["allowed_publish_topics"] = [
     "worker/{worker_id}/event/#",
 ]
 bridge["allowed_subscribe_topics"] = ["worker/{worker_id}/command/+"]
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 bridge["keepalive"] = 60
 bridge["command_qos"] = 2
 bridge["reply_qos"] = 1
@@ -156,8 +125,6 @@ bridge["runtime_event_target"] = "thread_management"
 bridge["runtime_state_resource"] = "proxy_runtime_command_state"
 bridge["runtime_command_binding_version"] = os.environ["BINDING_VERSION"]
 
-<<<<<<< HEAD
-=======
 security_mqtt["authentication_required"] = bridge["authentication_required"]
 security_mqtt["topic_acl_enforcement"] = bridge["topic_acl_enforcement"]
 security_mqtt["topic_acl_default_policy"] = bridge["topic_acl_default_policy"]
@@ -179,7 +146,6 @@ runtime_profile.setdefault("active_controller_ids", [2])
 runtime_profile.setdefault("optional_controller_ids", [1, 3, 4, 5])
 runtime_profile.setdefault("strict_missing_simulators", False)
 
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 mqtt_client["enabled"] = False
 mqtt_client["broker_ip"] = os.environ["BROKER_HOST"]
 mqtt_client["broker_port"] = int(os.environ["SECURE_PORT"])

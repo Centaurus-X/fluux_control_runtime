@@ -1,19 +1,11 @@
-<<<<<<< HEAD
-# Repository Strategy
-=======
 # Repository Strategy v35.1
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
 ## Recommended public repository boundary
 
 Publish the **entire repository root**:
 
 ```text
-<<<<<<< HEAD
-projektstand_v34_3_preproduction_final_runtime/
-=======
 projektstand_v35_1_preproduction_final_runtime/
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 ```
 
 Do not publish only `product/`.
@@ -41,13 +33,10 @@ modbus simulation repository    simulation server and test assets
 master repository               later, when the master instance is ready
 ```
 
-<<<<<<< HEAD
-=======
 ## PostgreSQL ownership
 
 The v35.1 runtime repository does not own PostgreSQL. PostgreSQL backup/restore, registry/auth/audit recovery and database migration checks belong to the external Product Proxy Gateway repository.
 
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 ## Master delivery recommendation
 
 For the current pre-production phase, the proxy gateway repository can continue to contain PostgreSQL and MQTT rollout helpers. A future master repository should be introduced when the master instance is implemented as a first-class component.

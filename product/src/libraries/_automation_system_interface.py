@@ -2105,11 +2105,7 @@ def _normalize_pid_params(pid_cfg):
     return {}
 
 
-<<<<<<< HEAD
-def create_pid_controller(kp, ki, kd, out_min, out_max, sample_time, anti_windup=True, error_scale=1.0, dt_max_s=None):
-=======
 def create_pid_controller(kp, ki, kd, out_min, out_max, sample_time, anti_windup=True, error_scale=1.0, dt_max_s=None, anti_windup_mode="clamp"):
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     """Create a PID controller state dict."""
     dt_max_val = None
     if dt_max_s is not None:
@@ -2127,10 +2123,7 @@ def create_pid_controller(kp, ki, kd, out_min, out_max, sample_time, anti_windup
         "out_max": float(out_max),
         "sample_time": float(sample_time),
         "anti_windup": anti_windup,
-<<<<<<< HEAD
-=======
         "anti_windup_mode": str(anti_windup_mode or "clamp"),
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "error_scale": float(error_scale),
         "dt_max_s": dt_max_val,
         "integral": 0.0,
@@ -2224,14 +2217,6 @@ def pid_update(controller, setpoint, measurement, now_ts):
 
         # Anti-windup
         integral_clamped = False
-<<<<<<< HEAD
-        max_integral = None
-        if controller.get("anti_windup", True):
-            denom = ki
-            if abs(denom) < 0.0001:
-                denom = 0.0001
-            max_integral = (out_max - out_min) / denom
-=======
         integral_rejected = False
         max_integral = None
         anti_windup_enabled = bool(controller.get("anti_windup", True))
@@ -2254,7 +2239,6 @@ def pid_update(controller, setpoint, measurement, now_ts):
             if abs(denom) < 0.0001:
                 denom = 0.0001
             max_integral = (out_max - out_min) / abs(denom)
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
             if controller["integral"] > max_integral:
                 controller["integral"] = max_integral
@@ -2316,11 +2300,8 @@ def pid_update(controller, setpoint, measurement, now_ts):
                 "integral": float(controller.get("integral", 0.0)),
                 "max_integral": max_integral,
                 "integral_clamped": bool(integral_clamped),
-<<<<<<< HEAD
-=======
                 "integral_rejected": bool(integral_rejected),
                 "anti_windup_mode": str(anti_windup_mode),
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
                 "output_pre": float(output_pre),
                 "output": float(output),
                 "clamp_state": clamp_state,
@@ -2350,11 +2331,7 @@ def pid_update(controller, setpoint, measurement, now_ts):
             if do_periodic:
                 controller["_dbg_pid_last_log_ts"] = float(now_ts)
                 logger.info(
-<<<<<<< HEAD
-                    "Automation %s: PID_DBG state=%s sp=%.3f meas=%.3f err=%.3f dt=%.3f(dt_raw=%.3f) P=%.6f I=%.6f D=%.6f int=%.6f out_pre=%.6f out=%.6f clamp=%s dt_max=%s int_clamp=%s",
-=======
                     "Automation %s: PID_DBG state=%s sp=%.3f meas=%.3f err=%.3f dt=%.3f(dt_raw=%.3f) P=%.6f I=%.6f D=%.6f int=%.6f out_pre=%.6f out=%.6f clamp=%s dt_max=%s int_clamp=%s int_reject=%s aw_mode=%s",
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
                     thread_index, state_id,
                     float(setpoint), float(measurement), float(error),
                     float(dt), float(dt_raw),
@@ -2362,10 +2339,7 @@ def pid_update(controller, setpoint, measurement, now_ts):
                     float(controller.get("integral", 0.0)),
                     float(output_pre), float(output),
                     clamp_state, str(dt_max_applied), str(integral_clamped),
-<<<<<<< HEAD
-=======
                     str(integral_rejected), str(anti_windup_mode),
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
                 )
 
             # (B) Clamp logs
@@ -2382,15 +2356,12 @@ def pid_update(controller, setpoint, measurement, now_ts):
                         float(integral_after_add), float(controller.get("integral", 0.0)),
                         float(max_integral) if max_integral is not None else 0.0,
                     )
-<<<<<<< HEAD
-=======
                 if integral_rejected:
                     logger.info(
                         "Automation %s: PID_I_REJECT state=%s mode=%s int_before=%.6f int_candidate=%.6f",
                         thread_index, state_id, str(anti_windup_mode),
                         float(integral_before_f), float(integral_after_add),
                     )
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
             # (C) Saturation / transitions
             prev_sat = controller.get("_dbg_pid_sat_state")
@@ -2758,10 +2729,7 @@ def ensure_controller_for_state(ctx, state):
     anti_windup = bool(cs.get("anti_windup", True))
     error_scale = float(cs.get("error_scale", 1.0))
     dt_max_s = cs.get("dt_max_s", None)
-<<<<<<< HEAD
-=======
     anti_windup_mode = str(cs.get("anti_windup_mode") or cs.get("anti_windup_strategy") or "clamp")
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
     # PID-Config optional via pid_config_id
     pid_config_id = cs.get("pid_config_id")
@@ -2796,13 +2764,10 @@ def ensure_controller_for_state(ctx, state):
                 error_scale = float(pid_cfg.get("error_scale"))
             if pid_cfg.get("dt_max_s") is not None:
                 dt_max_s = pid_cfg.get("dt_max_s")
-<<<<<<< HEAD
-=======
             if pid_cfg.get("anti_windup_mode") is not None:
                 anti_windup_mode = str(pid_cfg.get("anti_windup_mode"))
             elif pid_cfg.get("anti_windup_strategy") is not None:
                 anti_windup_mode = str(pid_cfg.get("anti_windup_strategy"))
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
         if kp is None:
             kp = float(cs.get("kp", DEFAULT_PID_KP))
@@ -2822,12 +2787,8 @@ def ensure_controller_for_state(ctx, state):
             float(sample_time),
             anti_windup,
             float(error_scale),
-<<<<<<< HEAD
-            dt_max_s
-=======
             dt_max_s,
             anti_windup_mode
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         )
         controller["type"] = ctype
 

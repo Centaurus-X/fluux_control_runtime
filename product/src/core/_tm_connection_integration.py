@@ -91,9 +91,6 @@ def _safe_int(value, default=None):
         return default
 
 
-<<<<<<< HEAD
-def _resolve_managed_controller_ids(config_data, node_id=None):
-=======
 def _normalize_controller_id_set(value):
     if value is None:
         return set()
@@ -133,21 +130,16 @@ def _apply_fieldbus_profile_to_ids(managed_ids, fieldbus_profile=None):
 
 
 def _resolve_managed_controller_ids(config_data, node_id=None, fieldbus_profile=None):
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     """Resolve controller ownership with the same semantics as TM."""
     cfg = config_data if isinstance(config_data, dict) else {}
     controllers = cfg.get("controllers") or []
     if not node_id:
-<<<<<<< HEAD
-        return {_safe_int(ctrl.get("controller_id")) for ctrl in controllers if isinstance(ctrl, dict) and _safe_int(ctrl.get("controller_id")) is not None}
-=======
         managed_ids = {
             _safe_int(ctrl.get("controller_id"))
             for ctrl in controllers
             if isinstance(ctrl, dict) and _safe_int(ctrl.get("controller_id")) is not None
         }
         return _apply_fieldbus_profile_to_ids(managed_ids, fieldbus_profile)
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
     local_node = cfg.get("local_node")
     local_nodes = []
@@ -174,23 +166,14 @@ def _resolve_managed_controller_ids(config_data, node_id=None, fieldbus_profile=
             cid = _safe_int(controller_id, None)
             if cid is not None:
                 managed.add(cid)
-<<<<<<< HEAD
-        return managed
-
-    return {
-=======
         return _apply_fieldbus_profile_to_ids(managed, fieldbus_profile)
 
     managed_ids = {
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         _safe_int(ctrl.get("controller_id"))
         for ctrl in controllers
         if isinstance(ctrl, dict) and _safe_int(ctrl.get("controller_id")) is not None
     }
-<<<<<<< HEAD
-=======
     return _apply_fieldbus_profile_to_ids(managed_ids, fieldbus_profile)
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
 
 def init_connection_layer(ctx):
@@ -250,11 +233,7 @@ def _start_all_connections(ctx):
     controllers = list(config_data.get("controllers") or [])
     virtual_controllers = list(config_data.get("virtual_controllers") or [])
     node_id = _ctx_get(ctx, "node_id")
-<<<<<<< HEAD
-    managed_ids = _resolve_managed_controller_ids(config_data, node_id)
-=======
     managed_ids = _resolve_managed_controller_ids(config_data, node_id, _ctx_get(ctx, "fieldbus_profile", {}))
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
     for ctrl in controllers:
         cid = _safe_int(ctrl.get("controller_id"), None)

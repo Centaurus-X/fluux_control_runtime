@@ -284,10 +284,7 @@ def build_thread_specs(runtime_state, queue_tools, runtime_bundle, component_tar
                 "gre_integration_enabled": cfg_bool(
                     worker_runtime_cfg.get("gre_integration_enabled", False), False,
                 ),
-<<<<<<< HEAD
-=======
                 "fieldbus_profile": settings.get("fieldbus", {}),
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
                 **pick_q("queue_event_send", "queue_event_pc"),
             },
             ownership={
@@ -432,14 +429,8 @@ def build_thread_specs(runtime_state, queue_tools, runtime_bundle, component_tar
         logger_obj.info("[thread_specs] worker_gateway available but disabled via config")
 
 
-<<<<<<< HEAD
-    # v32: Proxy Worker Bridge als optionale native Anbindung an das externe
-    # MQTT/WebSocket Proxy-Gateway v01.7. Default bleibt disabled, damit v31
-    # Runtime-Verhalten unveraendert bleibt.
-=======
     # v35.1: Proxy Worker Bridge als optionale native Anbindung an das externe
     # MQTT/WebSocket Proxy-Gateway. Default bleibt konfigurierbar.
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     proxy_bridge_target = component_targets.get("run_proxy_worker_bridge")
     proxy_bridge_cfg = settings.get("proxy_worker_bridge", {})
     proxy_bridge_enabled = cfg_bool(proxy_bridge_cfg.get("enabled", False), False)

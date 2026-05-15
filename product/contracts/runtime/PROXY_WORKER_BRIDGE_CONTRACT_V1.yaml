@@ -1,33 +1,16 @@
 schema_version: 1
 contract_id: C25
 contract_name: PROXY_WORKER_BRIDGE_CONTRACT_V1
-<<<<<<< HEAD
-status: active_optional_runtime
-owner_component: product/src/core/proxy_worker_bridge.py
-purpose: Native v32 worker-side binding to the external MQTT/WebSocket Proxy Gateway v01.7.
-=======
 status: active_compatibility_runtime
 release: v35_1_preproduction_final_runtime
 owner_component: product/src/core/proxy_worker_bridge.py
 purpose: Worker-side MQTT/MQTTS bridge to the external Product Proxy Gateway.
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 role_boundaries:
   worker:
     owns:
       - local_runtime_truth
       - local_command_acceptance
       - local_event_source
-<<<<<<< HEAD
-    must_not_own:
-      - proxy_user_registry
-      - global_acl_truth
-      - master_config_assignment_truth
-  proxy:
-    owns:
-      - websocket_client_sessions
-      - edge_acl_enforcement
-      - topic_routing
-=======
       - worker_side_topic_acl_precheck
       - local_runtime_health_snapshot
     must_not_own:
@@ -43,7 +26,6 @@ role_boundaries:
       - registry_auth_audit_persistence
       - postgresql_backup_restore
       - external_topic_routing_policy
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     must_not_own:
       - worker_hot_state_truth
       - local_io_write_order
@@ -72,11 +54,6 @@ commands:
   accepted_domains:
     - runtime
     - snapshot
-<<<<<<< HEAD
-  command_event_emit: V32_PROXY_WORKER_COMMAND_RECEIVED
-  target_guard: target.ref must match worker_id when present
-  auto_reply_default: true
-=======
   command_event_emit: V35_1_PROXY_RUNTIME_COMMAND_RECEIVED
   legacy_command_events:
     - V34_PROXY_RUNTIME_COMMAND_RECEIVED
@@ -85,7 +62,6 @@ commands:
   target_guard: target.ref must match worker_id when present
   auto_reply_default: true
   direct_fieldbus_io_write: false
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 snapshots:
   default_delivery: mqtt_direct
   large_snapshot_strategy_planned: mqtt_chunked_or_external_download
@@ -96,20 +72,6 @@ security:
     tls_ciphers_default: null
     empty_cipher_string_rule: treat_as_null
   credentials:
-<<<<<<< HEAD
-    username_password: optional
-    client_certificate: optional_future
-compatibility:
-  proxy_gateway_min_version: v01.7
-  v31_runtime_core_behavior: unchanged_when_disabled
-  default_enabled: false
-acceptance:
-  - bridge_disabled_must_not_change_v31_runtime
-  - bridge_enabled_subscribes_to_worker_command_wildcard
-  - bridge_publishes_retained_presence
-  - bridge_replies_to_client_specific_reply_topic
-  - bridge_emits_internal_command_event
-=======
     username_password: configurable
     username_env_default: PROXY_WORKER_BRIDGE_USERNAME
     password_env_default: PROXY_WORKER_BRIDGE_PASSWORD
@@ -144,4 +106,3 @@ acceptance:
   - bridge_emits_v35_1_internal_command_event
   - bridge_keeps_legacy_command_event_compatibility
   - bridge_denies_topics_outside_worker_acl
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)

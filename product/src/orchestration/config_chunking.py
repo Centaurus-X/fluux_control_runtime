@@ -182,8 +182,6 @@ def _filter_table_rows(rows, controller_id):
     return result
 
 
-<<<<<<< HEAD
-=======
 def _collect_int_values_from_rows(rows, column_name):
     """Return a deterministic set of int values from list rows."""
     result = set()
@@ -260,7 +258,6 @@ def _filter_process_state_rows(rows, controller_id, controller_sensor_ids, contr
     return result
 
 
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 # ---------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------
@@ -304,9 +301,6 @@ def chunk_controller_config(master_config, controller_id):
 
     for table_name in CONTROLLER_SCOPED_TABLES:
         rows = master_config.get(table_name)
-<<<<<<< HEAD
-        filtered = _filter_table_rows(rows, cid_int)
-=======
         if table_name == "process_states":
             controller_sensor_ids = _collect_int_values_from_rows(
                 controller_scoped.get("sensors"), "sensor_id"
@@ -319,7 +313,6 @@ def chunk_controller_config(master_config, controller_id):
             )
         else:
             filtered = _filter_table_rows(rows, cid_int)
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         controller_scoped[table_name] = filtered
         table_counts[table_name] = len(filtered)
         total_rows += len(filtered)

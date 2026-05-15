@@ -6,17 +6,11 @@ This project is offered under a dual licensing model:
 GPL-3.0-or-later OR Commercial License
 ```
 
-<<<<<<< HEAD
-## GPL option
-
-You may use, modify and distribute this project under the terms of the GNU General Public License, version 3 or later.
-=======
 You may use this project under either the open-source GPL option or under a separate commercial license granted by the project owner. The commercial option is intended for proprietary deployments, closed-source integration, redistribution, paid support or industrial use cases where GPL obligations are not suitable.
 
 ## 1. Open-source option: GPL-3.0-or-later
 
 Under the GPL option, this project may be used, studied, modified and redistributed under the terms of the GNU General Public License, version 3 or any later version published by the Free Software Foundation.
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
 SPDX identifier:
 
@@ -24,15 +18,6 @@ SPDX identifier:
 GPL-3.0-or-later
 ```
 
-<<<<<<< HEAD
-## Commercial option
-
-A separate commercial license may be granted by the project owner. The commercial license can provide different terms for proprietary use, redistribution, support, warranties, integration services or closed-source embedding.
-
-## Important note
-
-This file documents the intended licensing model for publication. Before a public legal release, the project owner should add the full canonical GPLv3 license text or use GitHub's license template for `GPL-3.0-or-later`.
-=======
 Practical meaning:
 
 ```text
@@ -96,4 +81,3 @@ Unless required by applicable law or agreed in writing, the software is provided
 ## 7. Legal review note
 
 This document is a clear project licensing statement, not legal advice. Before a public legal release or commercial distribution, the project owner should verify the final wording and commercial terms with qualified legal counsel.
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)

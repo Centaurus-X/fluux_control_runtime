@@ -13,10 +13,7 @@ product/logs/**/*.log
 product/logs/**/*.log.*
 product/logs/**/*.gz
 product/logs/**/*.zip
-<<<<<<< HEAD
-=======
 product/logs/runtime_health.json
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 product/config/ssl/certs/mqtt/*.pem
 product/config/ssl/certs/mqtt/*.key
 
@@ -24,11 +21,7 @@ product/config/ssl/certs/mqtt/*.key
 *_output.json
 *_ausgabe.json
 client_e2e*.log
-<<<<<<< HEAD
-runtime_v34*.log
-=======
 runtime_v*.log
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
 # OS/editor
 .DS_Store
@@ -41,16 +34,3 @@ Thumbs.db
 _private/
 archive/*.zip
 product/config/backup/
-<<<<<<< HEAD
-
-_private/
-.venv*/
-__pycache__/
-.pytest_cache/
-*.pyc
-*.pyo
-*.log
-.env
-*.env
-=======
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)

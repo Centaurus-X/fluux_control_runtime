@@ -21,11 +21,7 @@ def test_v31_contract_registry_is_canonical_and_complete():
 
     assert registry_path.is_file()
     assert "status: active_runtime_resolved" in registry
-<<<<<<< HEAD
-    assert "product_release_target: v34_preproduction_final_runtime" in registry
-=======
     assert "product_release_target: v35_1_preproduction_final_runtime" in registry
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     assert "canonical_contract_root: product/contracts" in registry
     assert "mode: contract_id_to_registry_path" in registry
 
@@ -80,11 +76,7 @@ def test_v31_runtime_bundle_resolves_contract_paths_from_registry():
 
     assert registry["loaded"] is True
     assert registry["registry_id"] == "CONTRACT_REGISTRY_V1"
-<<<<<<< HEAD
-    assert registry["product_release_target"] == "v34_preproduction_final_runtime"
-=======
     assert registry["product_release_target"] == "v35_1_preproduction_final_runtime"
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     assert config_source["contract_registry_loaded"] is True
     assert config_source["process_states_mapping_contract_id"] == "C08"
     assert config_source["control_methods_mapping_contract_id"] == "C17"
@@ -120,11 +112,7 @@ def test_v31_registry_points_to_externalized_data_contracts():
     assert "runtime_instance: product/contracts/runtime/CONTROL_METHODS_MAPPING_CONTRACT_V1.yaml" in registry
 
 
-<<<<<<< HEAD
-def test_v34_registry_resolves_runtime_command_activation_contract():
-=======
 def test_v35_1_registry_resolves_runtime_command_activation_contract():
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     root = _product_root()
     bundle = build_runtime_bundle(anchor_file=str(root / "run.py"))
     registry = bundle["settings"]["contract_registry"]

@@ -87,11 +87,6 @@ base:
     tls_ciphers: null
     tls_allow_insecure: false
     check_hostname: true
-<<<<<<< HEAD
-    username: null
-    password: null
-    client_id: v34-worker-worker_fn_01
-=======
     authentication_required: false
     username: null
     password: null
@@ -110,7 +105,6 @@ base:
     - worker/{worker_id}/event/#
     allowed_subscribe_topics:
     - worker/{worker_id}/command/+
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     keepalive: 60
     command_qos: 2
     reply_qos: 1
@@ -125,9 +119,6 @@ base:
     runtime_binding_enabled: true
     runtime_event_target: thread_management
     runtime_state_resource: proxy_runtime_command_state
-<<<<<<< HEAD
-    runtime_command_binding_version: v34_preproduction_final_runtime
-=======
     runtime_command_binding_version: v35_1_preproduction_final_runtime
   security:
     mqtt:
@@ -168,7 +159,6 @@ base:
       - controller_id: 2
         host: 192.168.0.3
         port: 5020
->>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
   worker_runtime:
     config_chunking_enabled: true
     writer_sync_enabled: true
