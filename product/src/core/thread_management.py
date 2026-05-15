@@ -188,7 +188,11 @@ except Exception:
         run_automation_cycle = None
 
 # ---------------------------------------------------------------------------
+<<<<<<< HEAD
 # Runtime Command Binding (Proxy Worker Bridge v34)
+=======
+# Runtime Command Binding (Proxy Worker Bridge v35.1)
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 # ---------------------------------------------------------------------------
 
 try:
@@ -229,6 +233,26 @@ def _safe_int(value, default=None):
         return default
 
 
+<<<<<<< HEAD
+=======
+def _safe_bool(value, default=False):
+    """Best-effort bool conversion for config and event payload flags."""
+    if isinstance(value, bool):
+        return bool(value)
+    if value is None:
+        return bool(default)
+    if isinstance(value, (int, float)):
+        return bool(value)
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in ("1", "true", "yes", "y", "on", "enabled"):
+            return True
+        if normalized in ("0", "false", "no", "n", "off", "disabled"):
+            return False
+    return bool(default)
+
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 def _safe_float(value, default=None):
     try:
         return float(value)
@@ -367,11 +391,21 @@ def _merge_automation_persistent_state(ctx, patch_state):
 # =============================================================================
 
 
+<<<<<<< HEAD
 def _sensor_value_changed(ctx, sensor_id, new_value):
     """Check if sensor value changed beyond threshold.
 
     Returns True if the value should trigger an automation cycle.
     Stores last accepted value per sensor_id in ctx["sensor_accepted_values"].
+=======
+def _sensor_value_changed(ctx, sensor_id, new_value, force=False):
+    """Check if a sensor value should trigger an automation cycle.
+
+    The normal path keeps the historical 0.5 percent change filter.  Forced
+    control-loop sensors, especially PID/PI/PD inputs, must be accepted on every
+    polling cycle so that stateful filters, PID memory and actuator refreshes do
+    not stall during long constant phases.
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     """
     if new_value is None:
         return False
@@ -383,6 +417,13 @@ def _sensor_value_changed(ctx, sensor_id, new_value):
     sid_key = str(sensor_id)
     last = accepted.get(sid_key)
 
+<<<<<<< HEAD
+=======
+    if force:
+        accepted[sid_key] = new_value
+        return True
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     if last is None:
         # First value for this sensor — always accept
         accepted[sid_key] = new_value
@@ -772,17 +813,68 @@ def _automation_result_consumer(ctx):
 # =============================================================================
 
 
+<<<<<<< HEAD
 def _resolve_controllers(config, node_id=None):
+=======
+def _normalize_controller_id_set(value):
+    if value is None:
+        return set()
+    if isinstance(value, dict):
+        value = value.get("active_controller_ids") or value.get("controller_ids") or ()
+    if isinstance(value, (str, int, float)):
+        value = (value,)
+    if not isinstance(value, (list, tuple, set)):
+        return set()
+    result = set()
+    for item in value:
+        cid = _safe_int(item)
+        if cid is not None:
+            result.add(cid)
+    return result
+
+
+def _select_fieldbus_runtime_profile(fieldbus_profile):
+    if not isinstance(fieldbus_profile, dict):
+        return {}
+    profile = fieldbus_profile.get("runtime_profile")
+    if isinstance(profile, dict):
+        return profile
+    return fieldbus_profile
+
+
+def _apply_fieldbus_runtime_profile(controllers, fieldbus_profile=None):
+    profile = _select_fieldbus_runtime_profile(fieldbus_profile)
+    if not profile or not bool(profile.get("enabled", True)):
+        return list(controllers or [])
+    active_ids = _normalize_controller_id_set(profile.get("active_controller_ids"))
+    if not active_ids:
+        return list(controllers or [])
+    return [c for c in list(controllers or []) if _safe_int(c.get("controller_id")) in active_ids]
+
+
+def _resolve_controllers(config, node_id=None, fieldbus_profile=None):
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     """Resolve which controllers this node should manage.
 
     Unterstützt sowohl Legacy-Format
         local_node = {"node_id": "fn-01", "controller_ids": [...]}
     als auch das aktuelle Format
         local_node = [{"node_id": "fn-01", "active_controllers": [...]}]
+<<<<<<< HEAD
     """
     controllers = config.get("controllers") or []
     if not node_id:
         return controllers
+=======
+
+    v35.1 ergänzt ein optionales Fieldbus-Runtime-Profil. Damit kann ein
+    Preproduction-Host nur die real vorhandenen Simulatoren aktiv halten,
+    während C1/C3/C4/C5 dokumentiert, aber nicht zwangsweise gestartet werden.
+    """
+    controllers = config.get("controllers") or []
+    if not node_id:
+        return _apply_fieldbus_runtime_profile(controllers, fieldbus_profile)
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
     local_node = config.get("local_node")
     local_nodes = []
@@ -813,9 +905,16 @@ def _resolve_controllers(config, node_id=None):
         if not assigned_set:
             return []
 
+<<<<<<< HEAD
         return [c for c in controllers if _safe_int(c.get("controller_id")) in assigned_set]
 
     return controllers
+=======
+        selected = [c for c in controllers if _safe_int(c.get("controller_id")) in assigned_set]
+        return _apply_fieldbus_runtime_profile(selected, fieldbus_profile)
+
+    return _apply_fieldbus_runtime_profile(controllers, fieldbus_profile)
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
 
 def _safe_unit_int(unit_raw, default=1):
@@ -990,7 +1089,11 @@ def _initialize_all_controllers(ctx):
     """Start controller threads for all eligible controllers."""
     config = ctx.get("config_snapshot") or {}
     node_id = ctx.get("node_id")
+<<<<<<< HEAD
     controllers = _resolve_controllers(config, node_id)
+=======
+    controllers = _resolve_controllers(config, node_id, ctx.get("fieldbus_profile"))
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
     ctrl_threads = ctx.get("controller_threads")
     active_ctrls = ctx.get("active_controllers")
@@ -1070,7 +1173,11 @@ def _reconcile_controllers(ctx):
     """Add/remove/restart controller threads to match current config."""
     config = ctx.get("config_snapshot") or {}
     node_id = ctx.get("node_id")
+<<<<<<< HEAD
     controllers = _resolve_controllers(config, node_id)
+=======
+    controllers = _resolve_controllers(config, node_id, ctx.get("fieldbus_profile"))
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
     new_ids = set()
     ctrl_data_map = {}
@@ -1207,13 +1314,29 @@ def handle_sensor_event(ctx, event):
             stats["sensor_events"] = int(stats.get("sensor_events", 0)) + 1
             stats["events_total"] = int(stats.get("events_total", 0)) + 1
 
+<<<<<<< HEAD
         # 0.5% change filter
         if not _sensor_value_changed(ctx, sensor_id, value):
+=======
+        force_automation = (
+            _safe_bool(payload.get("force_automation"), False)
+            or _safe_bool(payload.get("critical"), False)
+        )
+
+        # 0.5% change filter. Deterministic control-loop sensors bypass it.
+        if not _sensor_value_changed(ctx, sensor_id, value, force=force_automation):
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
             stats_filtered = ctx.get("stats")
             if isinstance(stats_filtered, dict):
                 stats_filtered["sensor_filtered"] = int(stats_filtered.get("sensor_filtered", 0)) + 1
             return
 
+<<<<<<< HEAD
+=======
+        if force_automation and isinstance(stats, dict):
+            stats["sensor_force_automation"] = int(stats.get("sensor_force_automation", 0)) + 1
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         # Submit automation job to ThreadPool
         pool = ctx.get("automation_pool")
         if pool is None:
@@ -1244,9 +1367,17 @@ def handle_sensor_event(ctx, event):
         result_queue = ctx.get("automation_result_queue")
 
         logger.info(
+<<<<<<< HEAD
             "TM: SENSOR_EVENT -> pool.submit (S%s=%.2f C%s job=%s)",
             sensor_id, float(value) if value is not None else 0.0,
             controller_id, thread_info["job_id"],
+=======
+            "TM: SENSOR_EVENT -> pool.submit (S%s=%.2f C%s job=%s force=%s reason=%s)",
+            sensor_id, float(value) if value is not None else 0.0,
+            controller_id, thread_info["job_id"],
+            str(force_automation),
+            str(payload.get("automation_reason") or payload.get("force_reason") or "-"),
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         )
 
         pool["submit"](
@@ -1304,11 +1435,19 @@ def handle_config_event(ctx, event):
 def handle_proxy_runtime_command_event(ctx, event):
     """Handle Proxy Worker Bridge runtime command events.
 
+<<<<<<< HEAD
     v34-Regel:
+=======
+    v35.1-Regel:
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
       - Die Bridge erzeugt die direkte Client-Reply synchron.
       - TM nimmt das Event deterministisch an und schreibt Audit/Command-State.
       - Falls ein Event ohne runtime_result kommt, wird es sicher lokal angewendet.
       - Direkte Feldbus-/IO-Schreibzugriffe bleiben blockiert.
+<<<<<<< HEAD
+=======
+      - Legacy-V34/V33/V32-Events bleiben reine Kompatibilitaetspfade.
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     """
     stats = ctx.get("stats")
     if isinstance(stats, dict):
@@ -1419,10 +1558,18 @@ def _status_monitor_loop(ctx):
             _hb_lines.append("TM HEARTBEAT STATUS")
             _hb_lines.append("-" * 72)
             _hb_stats = dict(ctx.get("stats") or {})
+<<<<<<< HEAD
             _hb_lines.append("  Events: total=%d sensor=%d filtered=%d jobs_submitted=%d" % (
                 _hb_stats.get("events_total", 0),
                 _hb_stats.get("sensor_events", 0),
                 _hb_stats.get("sensor_filtered", 0),
+=======
+            _hb_lines.append("  Events: total=%d sensor=%d filtered=%d forced=%d jobs_submitted=%d" % (
+                _hb_stats.get("events_total", 0),
+                _hb_stats.get("sensor_events", 0),
+                _hb_stats.get("sensor_filtered", 0),
+                _hb_stats.get("sensor_force_automation", 0),
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
                 _hb_stats.get("automation_jobs_submitted", 0),
             ))
             _hb_lines.append("  Controllers: active=%s" % sorted(ctx.get("active_controllers", set())))
@@ -1622,6 +1769,10 @@ def create_tm_context(
     chunking_enabled=False,
     writer_sync_enabled=False,
     gre_integration_enabled=False,
+<<<<<<< HEAD
+=======
+    fieldbus_profile=None,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 ):
     """Create the Thread Management runtime context."""
     shutdown = shutdown_event or threading.Event()
@@ -1644,6 +1795,10 @@ def create_tm_context(
         "chunking_enabled": bool(chunking_enabled),
         "writer_sync_enabled": bool(writer_sync_enabled),
         "gre_integration_enabled": bool(gre_integration_enabled),
+<<<<<<< HEAD
+=======
+        "fieldbus_profile": fieldbus_profile if isinstance(fieldbus_profile, dict) else {},
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
         # Event bus (created in main loop)
         "event_bus": None,
@@ -1674,6 +1829,10 @@ def create_tm_context(
             "events_total": 0,
             "sensor_events": 0,
             "sensor_filtered": 0,
+<<<<<<< HEAD
+=======
+            "sensor_force_automation": 0,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
             "config_events": 0,
             "timer_events": 0,
             "proxy_runtime_command_events": 0,
@@ -1714,7 +1873,11 @@ def setup_tm_event_handlers(ctx):
 
 
     rh = partial(handle_proxy_runtime_command_event, ctx)
+<<<<<<< HEAD
     for et in ("V34_PROXY_RUNTIME_COMMAND_RECEIVED", "V33_PROXY_WORKER_COMMAND_RECEIVED", "V32_PROXY_WORKER_COMMAND_RECEIVED"):
+=======
+    for et in ("V35_1_PROXY_RUNTIME_COMMAND_RECEIVED", "V34_PROXY_RUNTIME_COMMAND_RECEIVED", "V33_PROXY_WORKER_COMMAND_RECEIVED", "V32_PROXY_WORKER_COMMAND_RECEIVED"):
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         register(et, rh)
 
     bus["register_fallback"](partial(handle_generic_event, ctx))
@@ -1906,6 +2069,10 @@ def run_thread_management(
     chunking_enabled=False,
     writer_sync_enabled=False,
     gre_integration_enabled=False,
+<<<<<<< HEAD
+=======
+    fieldbus_profile=None,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     **unused_kwargs,
 ):
     """Thread entry point for TM v5.0.
@@ -1929,6 +2096,10 @@ def run_thread_management(
             chunking_enabled=chunking_enabled,
             writer_sync_enabled=writer_sync_enabled,
             gre_integration_enabled=gre_integration_enabled,
+<<<<<<< HEAD
+=======
+            fieldbus_profile=fieldbus_profile,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         )
         tm_main_loop(ctx)
     except Exception as exc:

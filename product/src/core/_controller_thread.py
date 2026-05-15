@@ -134,6 +134,129 @@ def _safe_int(value, default=None):
         return default
 
 
+<<<<<<< HEAD
+=======
+def _safe_bool(value, default=False):
+    """Best-effort bool conversion for configuration flags."""
+    if isinstance(value, bool):
+        return bool(value)
+    if value is None:
+        return bool(default)
+    if isinstance(value, (int, float)):
+        return bool(value)
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in ("1", "true", "yes", "y", "on", "enabled"):
+            return True
+        if normalized in ("0", "false", "no", "n", "off", "disabled"):
+            return False
+    return bool(default)
+
+
+def _normalize_int_list(value):
+    """Normalize a scalar/list/set config value into a de-duplicated int list."""
+    if value is None:
+        return []
+    if isinstance(value, (str, int, float)):
+        value = [value]
+    if not isinstance(value, (list, tuple, set)):
+        return []
+
+    result = []
+    seen = set()
+    for item in value:
+        item_int = _safe_int(item, None)
+        if item_int is None or item_int in seen:
+            continue
+        seen.add(item_int)
+        result.append(item_int)
+    return result
+
+
+def _normalize_control_type_set(value):
+    """Normalize control strategy names used by automation force rules."""
+    if value is None:
+        value = ["PID", "PI", "PD"]
+    if isinstance(value, str):
+        value = [value]
+    if not isinstance(value, (list, tuple, set)):
+        return {"PID", "PI", "PD"}
+
+    result = set()
+    for item in value:
+        normalized = str(item or "").strip().upper()
+        if normalized:
+            result.add(normalized)
+    if not result:
+        result.add("PID")
+        result.add("PI")
+        result.add("PD")
+    return result
+
+
+def _resolve_force_automation_sensor_map(cfg):
+    """Return sensor_id -> reason for deterministic control-loop polling.
+
+    Normal sensors are event-driven and publish only on raw changes. Stateful
+    PID/PI/PD loops must continue to run during constant phases as well;
+    otherwise the filter chain, PID state and actuator refreshes stop although
+    the controller is still alive.
+    """
+    if not isinstance(cfg, dict):
+        return {}
+
+    settings = cfg.get("automation_settings")
+    if not isinstance(settings, dict):
+        settings = {}
+
+    force_map = {}
+    for sid in _normalize_int_list(settings.get("force_automation_sensor_ids")):
+        force_map[sid] = "automation_settings.force_automation_sensor_ids"
+
+    force_controlled = _safe_bool(
+        settings.get("force_automation_for_controlled_sensors"),
+        True,
+    )
+
+    force_types = _normalize_control_type_set(
+        settings.get("force_automation_control_strategy_types")
+    )
+
+    process_states = cfg.get("process_states") or []
+    if not isinstance(process_states, list):
+        return force_map
+
+    for state in process_states:
+        if not isinstance(state, dict):
+            continue
+        control_strategy = state.get("control_strategy") or {}
+        if not isinstance(control_strategy, dict):
+            continue
+        control_type = str(control_strategy.get("type") or "").strip().upper()
+        state_force_raw = control_strategy.get("force_automation", state.get("force_automation"))
+        state_force = None
+        if state_force_raw is not None:
+            state_force = _safe_bool(state_force_raw, False)
+
+        if control_type not in force_types:
+            continue
+        if state_force is False:
+            continue
+        if not force_controlled and state_force is not True:
+            continue
+
+        state_id = _safe_int(state.get("state_id"), None)
+        reason = "control_strategy.%s" % control_type
+        if state_id is not None:
+            reason = "%s state=%s" % (reason, state_id)
+
+        for sid in _normalize_int_list(state.get("sensor_ids")):
+            force_map.setdefault(sid, reason)
+
+    return force_map
+
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 def _first_of_pair(item):
     return item[0]
 
@@ -1075,6 +1198,11 @@ def _sensor_polling_loop(ctx):
                 interval = max(float(comm.get("sensor_interval", SENSOR_POLL_INTERVAL_DEFAULT)),
                                SENSOR_POLL_INTERVAL_MIN)
 
+<<<<<<< HEAD
+=======
+            force_sensor_map = _resolve_force_automation_sensor_map(cfg)
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
             sensors = []
             for s in cfg_sensors:
                 try:
@@ -1082,13 +1210,29 @@ def _sensor_polling_loop(ctx):
                         continue
                 except Exception:
                     continue
+<<<<<<< HEAD
+=======
+
+                sensor_id_int = _safe_int(s.get("sensor_id"), None)
+                force_reason = force_sensor_map.get(sensor_id_int)
+                critical_flag = _safe_bool(s.get("critical", False), False)
+                force_automation = bool(critical_flag or force_reason)
+                automation_reason = "critical" if critical_flag else (force_reason or None)
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
                 sensors.append({
                     "sensor_id": s.get("sensor_id"),
                     "function_type": s.get("function_type"),
                     "address": s.get("address"),
                     "threshold": s.get("threshold"),
                     "priority": s.get("priority", 1.0),
+<<<<<<< HEAD
                     "critical": s.get("critical", False),
+=======
+                    "critical": critical_flag,
+                    "force_automation": force_automation,
+                    "automation_reason": automation_reason,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
                 })
 
             if not sensors:
@@ -1182,7 +1326,13 @@ def _sensor_polling_loop(ctx):
                 ftype = sensor.get("function_type")
                 addr = sensor.get("address")
                 threshold = sensor.get("threshold")
+<<<<<<< HEAD
                 critical = sensor.get("critical", False)
+=======
+                critical = _safe_bool(sensor.get("critical", False), False)
+                force_automation = _safe_bool(sensor.get("force_automation", False), False)
+                automation_reason = sensor.get("automation_reason")
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
                 # Legacy-Store
                 try:
@@ -1211,11 +1361,22 @@ def _sensor_polling_loop(ctx):
                 value_changed = (last_value != value) or (last_value is None and value is not None)
                 last_sensor_values[sensor_id] = value
 
+<<<<<<< HEAD
                 # Event nur bei Änderung oder kritischem Sensor
                 if value_changed or critical:
                     _publish_sensor_value_update(
                         ctx, cid, sensor_id, value, threshold,
                         address=addr, function_type=ftype,
+=======
+                # Event nur bei Änderung, kritischem Sensor oder deterministischem Control-Loop.
+                if value_changed or critical or force_automation:
+                    _publish_sensor_value_update(
+                        ctx, cid, sensor_id, value, threshold,
+                        address=addr, function_type=ftype,
+                        critical=critical,
+                        force_automation=force_automation,
+                        automation_reason=automation_reason,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
                     )
                     events_sent += 1
 
@@ -1255,7 +1416,13 @@ def _sensor_polling_loop(ctx):
 # =============================================================================
 
 def _publish_sensor_value_update(ctx, controller_id, sensor_id, value, threshold,
+<<<<<<< HEAD
                                  address=None, function_type=None):
+=======
+                                 address=None, function_type=None,
+                                 critical=False, force_automation=False,
+                                 automation_reason=None):
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     """Publiziert SENSOR_VALUE_UPDATE Event (synchron).
 
     Die Sensorwerte laufen ausschließlich über die Event-Pipeline.
@@ -1271,6 +1438,12 @@ def _publish_sensor_value_update(ctx, controller_id, sensor_id, value, threshold
         "value": value,
         "address": address,
         "function_type": function_type,
+<<<<<<< HEAD
+=======
+        "critical": bool(critical),
+        "force_automation": bool(force_automation),
+        "automation_reason": automation_reason,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "timestamp": ts,
         "info": info,
     })

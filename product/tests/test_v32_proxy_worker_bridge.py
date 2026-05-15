@@ -147,16 +147,26 @@ def test_handle_command_emits_event_and_reply_with_fake_client():
 
     def publish(topic, payload, qos=0, retain=False):
         published.append({"topic": topic, "payload": payload, "qos": qos, "retain": retain})
+<<<<<<< HEAD
         return type("PublishInfo", (), {"rc": 0})()
+=======
+        return SimpleNamespace(rc=0)
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
     ctx["runtime"]["client_obj"] = SimpleNamespace(publish=publish)
     result = bridge.handle_proxy_command(ctx, "worker/worker_fn_01/command/runtime", _make_command_envelope())
     assert result == "handled"
     assert command_queue.qsize() == 1
     emitted = command_queue.get_nowait()
+<<<<<<< HEAD
     assert emitted["event_type"] == "V34_PROXY_RUNTIME_COMMAND_RECEIVED"
     assert emitted["legacy_event_type"] == "V33_PROXY_WORKER_COMMAND_RECEIVED"
     assert emitted["previous_event_type"] == "V32_PROXY_WORKER_COMMAND_RECEIVED"
+=======
+    assert emitted["event_type"] == "V35_1_PROXY_RUNTIME_COMMAND_RECEIVED"
+    assert emitted["legacy_event_type"] == "V34_PROXY_RUNTIME_COMMAND_RECEIVED"
+    assert emitted["previous_event_type"] == "V33_PROXY_WORKER_COMMAND_RECEIVED"
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     assert emitted["target"] == "thread_management"
     assert emitted["worker_id"] == "worker_fn_01"
     assert published[0]["topic"] == "worker/worker_fn_01/reply/engineering_client"
@@ -294,7 +304,11 @@ def test_runtime_command_reply_payload_for_state_read_contains_snapshot():
     assert payload["result"]["state"]["status"] == "ok"
 
 
+<<<<<<< HEAD
 def test_v33_emitted_command_event_has_resolvable_target():
+=======
+def test_v35_1_emitted_command_event_has_resolvable_target():
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     command_queue = Queue()
     ctx = bridge.build_bridge_ctx(
         node_id="worker_fn_01",
@@ -307,12 +321,20 @@ def test_v33_emitted_command_event_has_resolvable_target():
     )
     bridge._emit_command_event(ctx, {"domain": "runtime", "worker_id": "worker_fn_01"}, _make_command_envelope())
     event = command_queue.get_nowait()
+<<<<<<< HEAD
     assert event["event_type"] == "V34_PROXY_RUNTIME_COMMAND_RECEIVED"
+=======
+    assert event["event_type"] == "V35_1_PROXY_RUNTIME_COMMAND_RECEIVED"
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     assert event["target"] == "thread_management"
     assert event["runtime_binding"]["safe_direct_io_write"] is False
 
 
+<<<<<<< HEAD
 def test_v33_parameter_update_is_bound_to_runtime_state():
+=======
+def test_v35_1_parameter_update_is_bound_to_runtime_state():
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     ctx = bridge.build_bridge_ctx(
         node_id="worker_fn_01",
         resources={"user_config": {"data": {}, "lock": None}, "event_store": {"data": {}, "lock": None}},

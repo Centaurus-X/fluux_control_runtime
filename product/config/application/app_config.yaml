@@ -87,9 +87,30 @@ base:
     tls_ciphers: null
     tls_allow_insecure: false
     check_hostname: true
+<<<<<<< HEAD
     username: null
     password: null
     client_id: v34-worker-worker_fn_01
+=======
+    authentication_required: false
+    username: null
+    password: null
+    username_env: PROXY_WORKER_BRIDGE_USERNAME
+    password_env: PROXY_WORKER_BRIDGE_PASSWORD
+    client_id: v35-1-worker-worker_fn_01
+    mtls_mode: optional
+    certificate_rotation_enabled: false
+    certificate_renew_before_days: 30
+    topic_acl_enforcement: true
+    topic_acl_default_policy: deny
+    allowed_publish_topics:
+    - worker/{worker_id}/reply/#
+    - worker/{worker_id}/presence
+    - worker/{worker_id}/snapshot/#
+    - worker/{worker_id}/event/#
+    allowed_subscribe_topics:
+    - worker/{worker_id}/command/+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     keepalive: 60
     command_qos: 2
     reply_qos: 1
@@ -104,7 +125,50 @@ base:
     runtime_binding_enabled: true
     runtime_event_target: thread_management
     runtime_state_resource: proxy_runtime_command_state
+<<<<<<< HEAD
     runtime_command_binding_version: v34_preproduction_final_runtime
+=======
+    runtime_command_binding_version: v35_1_preproduction_final_runtime
+  security:
+    mqtt:
+      authentication_required: false
+      topic_acl_enforcement: true
+      topic_acl_default_policy: deny
+    pki:
+      mtls_mode: optional
+      certificate_rotation_enabled: false
+      certificate_renew_before_days: 30
+  monitoring:
+    health:
+      enabled: true
+      path: logs/system_logs/runtime_health.json
+      interval_s: 15.0
+      max_age_s: 120.0
+      include_resource_summary: true
+      include_thread_summary: true
+    alerting:
+      enabled: false
+      log_only: true
+      worker_presence_max_age_s: 120.0
+      queue_backlog_warn: 1000
+      restart_observation_window_s: 300.0
+  fieldbus:
+    runtime_profile:
+      enabled: true
+      mode: simulation_subset
+      active_controller_ids:
+      - 2
+      optional_controller_ids:
+      - 1
+      - 3
+      - 4
+      - 5
+      strict_missing_simulators: false
+      expected_simulators:
+      - controller_id: 2
+        host: 192.168.0.3
+        port: 5020
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
   worker_runtime:
     config_chunking_enabled: true
     writer_sync_enabled: true

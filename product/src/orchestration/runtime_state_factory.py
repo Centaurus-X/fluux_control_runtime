@@ -168,7 +168,11 @@ def _build_default_resource_registry(settings):
     add_resource(resources, "actuator_values", data={})
     add_resource(resources, "event_store", data={})
     add_resource(resources, "proxy_runtime_command_state", data={
+<<<<<<< HEAD
         "binding_version": "v34_preproduction_final_runtime",
+=======
+        "binding_version": "v35_1_preproduction_final_runtime",
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "commands": {},
         "control_methods": {},
         "parameters": {},

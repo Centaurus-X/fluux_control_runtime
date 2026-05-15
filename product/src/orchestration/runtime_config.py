@@ -260,6 +260,134 @@ def resolve_optional_path(project_root, path_value):
     return resolve_relative_path(project_root, normalized)
 
 
+<<<<<<< HEAD
+=======
+
+def normalize_config_text_sequence(value):
+    if value is None:
+        return ()
+    if isinstance(value, str):
+        items = [item.strip() for item in value.replace(";", ",").split(",")]
+    elif isinstance(value, (list, tuple, set)):
+        items = list(value)
+    else:
+        items = [value]
+    result = []
+    for item in items:
+        normalized = normalize_optional_config_value(item)
+        if normalized is not None:
+            result.append(normalized)
+    return tuple(result)
+
+
+def normalize_acl_policy(value, default="deny"):
+    text = cfg_str(value, default).strip().lower()
+    if text in ("allow", "permit", "accept"):
+        return "allow"
+    return "deny"
+
+
+def normalize_mtls_mode(value, default="optional"):
+    text = cfg_str(value, default).strip().lower().replace("-", "_")
+    if text in ("required", "require", "strict", "mutual_tls", "mtls"):
+        return "required"
+    if text in ("disabled", "disable", "off", "false", "none", "no"):
+        return "disabled"
+    return "optional"
+
+
+def build_security_runtime_settings(app_config, project_root, proxy_worker_bridge=None):
+    bridge = proxy_worker_bridge if isinstance(proxy_worker_bridge, dict) else {}
+    return {
+        "runtime_security_version": "v35.1",
+        "postgres_scope": "gateway_proxy_external_not_worker_runtime_dependency",
+        "mqtt": {
+            "authentication_required": cfg_bool(
+                app_cfg_get(app_config, "security.mqtt.authentication_required", bridge.get("authentication_required", False)),
+                False,
+            ),
+            "topic_acl_enforcement": cfg_bool(
+                app_cfg_get(app_config, "security.mqtt.topic_acl_enforcement", bridge.get("topic_acl_enforcement", True)),
+                True,
+            ),
+            "topic_acl_default_policy": normalize_acl_policy(
+                app_cfg_get(app_config, "security.mqtt.topic_acl_default_policy", bridge.get("topic_acl_default_policy", "deny")),
+                "deny",
+            ),
+        },
+        "pki": {
+            "mtls_mode": normalize_mtls_mode(
+                app_cfg_get(app_config, "security.pki.mtls_mode", bridge.get("mtls_mode", "optional")),
+                "optional",
+            ),
+            "certificate_rotation_enabled": cfg_bool(
+                app_cfg_get(app_config, "security.pki.certificate_rotation_enabled", bridge.get("certificate_rotation_enabled", False)),
+                False,
+            ),
+            "certificate_renew_before_days": cfg_int(
+                app_cfg_get(app_config, "security.pki.certificate_renew_before_days", bridge.get("certificate_renew_before_days", 30)),
+                30,
+            ),
+            "ca_cert_file": bridge.get("ca_cert_file"),
+            "client_cert_file": bridge.get("client_cert_file"),
+            "client_key_file_configured": bridge.get("client_key_file") is not None,
+        },
+        "secrets": {
+            "username_env": app_cfg_get(app_config, "proxy_worker_bridge.username_env", None),
+            "password_env": app_cfg_get(app_config, "proxy_worker_bridge.password_env", None),
+            "password_inline_configured": normalize_optional_config_value(app_cfg_get(app_config, "proxy_worker_bridge.password", None)) is not None,
+        },
+    }
+
+
+def build_monitoring_runtime_settings(app_config, project_root):
+    health_path = app_cfg_get(app_config, "monitoring.health.path", "logs/system_logs/runtime_health.json")
+    return {
+        "version": "v35.1",
+        "health": {
+            "enabled": cfg_bool(app_cfg_get(app_config, "monitoring.health.enabled", True), True),
+            "path": resolve_relative_path(project_root, health_path),
+            "interval_s": cfg_float(app_cfg_get(app_config, "monitoring.health.interval_s", 15.0), 15.0),
+            "max_age_s": cfg_float(app_cfg_get(app_config, "monitoring.health.max_age_s", 120.0), 120.0),
+            "include_resource_summary": cfg_bool(app_cfg_get(app_config, "monitoring.health.include_resource_summary", True), True),
+            "include_thread_summary": cfg_bool(app_cfg_get(app_config, "monitoring.health.include_thread_summary", True), True),
+        },
+        "alerting": {
+            "enabled": cfg_bool(app_cfg_get(app_config, "monitoring.alerting.enabled", False), False),
+            "log_only": cfg_bool(app_cfg_get(app_config, "monitoring.alerting.log_only", True), True),
+            "worker_presence_max_age_s": cfg_float(app_cfg_get(app_config, "monitoring.alerting.worker_presence_max_age_s", 120.0), 120.0),
+            "queue_backlog_warn": cfg_int(app_cfg_get(app_config, "monitoring.alerting.queue_backlog_warn", 1000), 1000),
+            "restart_observation_window_s": cfg_float(app_cfg_get(app_config, "monitoring.alerting.restart_observation_window_s", 300.0), 300.0),
+        },
+    }
+
+
+def build_fieldbus_runtime_settings(app_config, project_root):
+    active_controller_ids = normalize_config_text_sequence(
+        app_cfg_get(app_config, "fieldbus.runtime_profile.active_controller_ids", (2,))
+    )
+    optional_controller_ids = normalize_config_text_sequence(
+        app_cfg_get(app_config, "fieldbus.runtime_profile.optional_controller_ids", (1, 3, 4, 5))
+    )
+    expected_simulators = app_cfg_get(app_config, "fieldbus.runtime_profile.expected_simulators", [])
+    if not isinstance(expected_simulators, list):
+        expected_simulators = []
+    return {
+        "runtime_profile": {
+            "enabled": cfg_bool(app_cfg_get(app_config, "fieldbus.runtime_profile.enabled", True), True),
+            "mode": cfg_str(app_cfg_get(app_config, "fieldbus.runtime_profile.mode", "simulation_subset"), "simulation_subset"),
+            "active_controller_ids": tuple(cfg_int(item, -1) for item in active_controller_ids if cfg_int(item, -1) >= 0),
+            "optional_controller_ids": tuple(cfg_int(item, -1) for item in optional_controller_ids if cfg_int(item, -1) >= 0),
+            "strict_missing_simulators": cfg_bool(
+                app_cfg_get(app_config, "fieldbus.runtime_profile.strict_missing_simulators", False),
+                False,
+            ),
+            "expected_simulators": copy.deepcopy(expected_simulators),
+        }
+    }
+
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 def format_host_for_uri(host, use_ipv6):
     """
     Format a host for URI usage and wrap IPv6 literals.
@@ -947,7 +1075,11 @@ def build_worker_gateway_runtime_settings(app_config, project_root, mqtt_client=
 
 
 def build_proxy_worker_bridge_runtime_settings(app_config, project_root, mqtt_client=None):
+<<<<<<< HEAD
     """Build normalized settings for the v32 Proxy Worker Bridge.
+=======
+    """Build normalized settings for the v35.1 Proxy Worker Bridge.
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
     The bridge is intentionally optional. It uses the already configured
     network.mqtt_client defaults unless explicit proxy_worker_bridge values are
@@ -999,7 +1131,11 @@ def build_proxy_worker_bridge_runtime_settings(app_config, project_root, mqtt_cl
 
     return {
         "enabled": enabled,
+<<<<<<< HEAD
         "contract_id": cfg_str(app_cfg_get(app_config, "proxy_worker_bridge.contract_id", "C25"), "C25"),
+=======
+        "contract_id": cfg_str(app_cfg_get(app_config, "proxy_worker_bridge.contract_id", "C27"), "C27"),
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "worker_id": worker_id,
         "broker_host": broker_host,
         "broker_port": broker_port,
@@ -1012,9 +1148,32 @@ def build_proxy_worker_bridge_runtime_settings(app_config, project_root, mqtt_cl
         "tls_ciphers": tls_ciphers,
         "tls_allow_insecure": cfg_bool(app_cfg_get(app_config, "proxy_worker_bridge.tls_allow_insecure", False), False),
         "check_hostname": cfg_bool(app_cfg_get(app_config, "proxy_worker_bridge.check_hostname", True), True),
+<<<<<<< HEAD
         "username": app_cfg_get(app_config, "proxy_worker_bridge.username", mqtt_client.get("username")),
         "password": app_cfg_get(app_config, "proxy_worker_bridge.password", mqtt_client.get("password")),
         "client_id": cfg_str(app_cfg_get(app_config, "proxy_worker_bridge.client_id", "v33-worker-%s" % worker_id), "v33-worker-%s" % worker_id),
+=======
+        "authentication_required": cfg_bool(app_cfg_get(app_config, "proxy_worker_bridge.authentication_required", False), False),
+        "username": app_cfg_get(app_config, "proxy_worker_bridge.username", mqtt_client.get("username")),
+        "password": app_cfg_get(app_config, "proxy_worker_bridge.password", mqtt_client.get("password")),
+        "username_env": app_cfg_get(app_config, "proxy_worker_bridge.username_env", None),
+        "password_env": app_cfg_get(app_config, "proxy_worker_bridge.password_env", None),
+        "client_id": cfg_str(app_cfg_get(app_config, "proxy_worker_bridge.client_id", "v35-1-worker-%s" % worker_id), "v35-1-worker-%s" % worker_id),
+        "mtls_mode": normalize_mtls_mode(app_cfg_get(app_config, "proxy_worker_bridge.mtls_mode", "optional"), "optional"),
+        "certificate_rotation_enabled": cfg_bool(app_cfg_get(app_config, "proxy_worker_bridge.certificate_rotation_enabled", False), False),
+        "certificate_renew_before_days": cfg_int(app_cfg_get(app_config, "proxy_worker_bridge.certificate_renew_before_days", 30), 30),
+        "topic_acl_enforcement": cfg_bool(app_cfg_get(app_config, "proxy_worker_bridge.topic_acl_enforcement", True), True),
+        "topic_acl_default_policy": normalize_acl_policy(app_cfg_get(app_config, "proxy_worker_bridge.topic_acl_default_policy", "deny"), "deny"),
+        "allowed_publish_topics": normalize_config_text_sequence(app_cfg_get(app_config, "proxy_worker_bridge.allowed_publish_topics", (
+            "worker/{worker_id}/reply/#",
+            "worker/{worker_id}/presence",
+            "worker/{worker_id}/snapshot/#",
+            "worker/{worker_id}/event/#",
+        ))),
+        "allowed_subscribe_topics": normalize_config_text_sequence(app_cfg_get(app_config, "proxy_worker_bridge.allowed_subscribe_topics", (
+            "worker/{worker_id}/command/+",
+        ))),
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "keepalive": cfg_int(app_cfg_get(app_config, "proxy_worker_bridge.keepalive", 60), 60),
         "command_qos": cfg_int(app_cfg_get(app_config, "proxy_worker_bridge.command_qos", 2), 2),
         "reply_qos": cfg_int(app_cfg_get(app_config, "proxy_worker_bridge.reply_qos", 1), 1),
@@ -1027,7 +1186,12 @@ def build_proxy_worker_bridge_runtime_settings(app_config, project_root, mqtt_cl
         "snapshot_enabled": cfg_bool(app_cfg_get(app_config, "proxy_worker_bridge.snapshot_enabled", True), True),
         "runtime_binding_enabled": cfg_bool(app_cfg_get(app_config, "proxy_worker_bridge.runtime_binding_enabled", True), True),
         "runtime_event_target": cfg_str(app_cfg_get(app_config, "proxy_worker_bridge.runtime_event_target", "thread_management"), "thread_management"),
+<<<<<<< HEAD
         "runtime_state_resource": cfg_str(app_cfg_get(app_config, "proxy_worker_bridge.runtime_state_resource", "event_store"), "event_store"),
+=======
+        "runtime_state_resource": cfg_str(app_cfg_get(app_config, "proxy_worker_bridge.runtime_state_resource", "proxy_runtime_command_state"), "proxy_runtime_command_state"),
+        "runtime_command_binding_version": cfg_str(app_cfg_get(app_config, "proxy_worker_bridge.runtime_command_binding_version", "v35_1_preproduction_final_runtime"), "v35_1_preproduction_final_runtime"),
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "max_payload_bytes": cfg_int(app_cfg_get(app_config, "proxy_worker_bridge.max_payload_bytes", 262144), 262144),
     }
 
@@ -1091,6 +1255,12 @@ def build_runtime_settings(app_config, project_root, base_dir=None):
     )
     worker_gateway = build_worker_gateway_runtime_settings(app_config, project_root, mqtt_client=mqtt_client)
     proxy_worker_bridge = build_proxy_worker_bridge_runtime_settings(app_config, project_root, mqtt_client=mqtt_client)
+<<<<<<< HEAD
+=======
+    security = build_security_runtime_settings(app_config, project_root, proxy_worker_bridge=proxy_worker_bridge)
+    monitoring = build_monitoring_runtime_settings(app_config, project_root)
+    fieldbus = build_fieldbus_runtime_settings(app_config, project_root)
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     effective_scheme = "mqtts" if mqtt_client.get("ssl_enabled") else protocol
     master_uri = build_master_uri(
         protocol=effective_scheme,
@@ -1123,6 +1293,12 @@ def build_runtime_settings(app_config, project_root, base_dir=None):
         "config_source": config_source,
         "worker_gateway": worker_gateway,
         "proxy_worker_bridge": proxy_worker_bridge,
+<<<<<<< HEAD
+=======
+        "security": security,
+        "monitoring": monitoring,
+        "fieldbus": fieldbus,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "worker_state": {
             "run_time_mode": cfg_str(app_cfg_get(app_config, "worker_state.run_time_mode", ""), ""),
             "persist_data": cfg_bool(app_cfg_get(app_config, "worker_state.persist_data", True), True),

@@ -1,0 +1,23 @@
+[Unit]
+Description=Product Runtime v35.1 Preproduction Worker fn01
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{RUNTIME_USER}}
+WorkingDirectory={{RUNTIME_ROOT}}/product
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/etc/default/product-runtime-v35-1
+ExecStart={{RUNTIME_PYTHON}} {{RUNTIME_ROOT}}/product/src/sync_xserver_main.py
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=product-runtime-v35-1
+
+[Install]
+WantedBy=multi-user.target

@@ -1,15 +1,23 @@
 schema_version: 1
 contract_id: C25
 contract_name: PROXY_WORKER_BRIDGE_CONTRACT_V1
+<<<<<<< HEAD
 status: active_optional_runtime
 owner_component: product/src/core/proxy_worker_bridge.py
 purpose: Native v32 worker-side binding to the external MQTT/WebSocket Proxy Gateway v01.7.
+=======
+status: active_compatibility_runtime
+release: v35_1_preproduction_final_runtime
+owner_component: product/src/core/proxy_worker_bridge.py
+purpose: Worker-side MQTT/MQTTS bridge to the external Product Proxy Gateway.
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 role_boundaries:
   worker:
     owns:
       - local_runtime_truth
       - local_command_acceptance
       - local_event_source
+<<<<<<< HEAD
     must_not_own:
       - proxy_user_registry
       - global_acl_truth
@@ -19,6 +27,23 @@ role_boundaries:
       - websocket_client_sessions
       - edge_acl_enforcement
       - topic_routing
+=======
+      - worker_side_topic_acl_precheck
+      - local_runtime_health_snapshot
+    must_not_own:
+      - proxy_user_registry
+      - broker_global_acl_truth
+      - gateway_postgresql_registry
+      - global_auth_audit_persistence
+      - master_config_assignment_truth
+  proxy_gateway:
+    owns:
+      - websocket_client_sessions
+      - client_authentication
+      - registry_auth_audit_persistence
+      - postgresql_backup_restore
+      - external_topic_routing_policy
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     must_not_own:
       - worker_hot_state_truth
       - local_io_write_order
@@ -47,9 +72,20 @@ commands:
   accepted_domains:
     - runtime
     - snapshot
+<<<<<<< HEAD
   command_event_emit: V32_PROXY_WORKER_COMMAND_RECEIVED
   target_guard: target.ref must match worker_id when present
   auto_reply_default: true
+=======
+  command_event_emit: V35_1_PROXY_RUNTIME_COMMAND_RECEIVED
+  legacy_command_events:
+    - V34_PROXY_RUNTIME_COMMAND_RECEIVED
+    - V33_PROXY_WORKER_COMMAND_RECEIVED
+    - V32_PROXY_WORKER_COMMAND_RECEIVED
+  target_guard: target.ref must match worker_id when present
+  auto_reply_default: true
+  direct_fieldbus_io_write: false
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 snapshots:
   default_delivery: mqtt_direct
   large_snapshot_strategy_planned: mqtt_chunked_or_external_download
@@ -60,6 +96,7 @@ security:
     tls_ciphers_default: null
     empty_cipher_string_rule: treat_as_null
   credentials:
+<<<<<<< HEAD
     username_password: optional
     client_certificate: optional_future
 compatibility:
@@ -72,3 +109,39 @@ acceptance:
   - bridge_publishes_retained_presence
   - bridge_replies_to_client_specific_reply_topic
   - bridge_emits_internal_command_event
+=======
+    username_password: configurable
+    username_env_default: PROXY_WORKER_BRIDGE_USERNAME
+    password_env_default: PROXY_WORKER_BRIDGE_PASSWORD
+  mtls:
+    mode_values:
+      - disabled
+      - optional
+      - required
+    default_mode: optional
+  topic_acl:
+    worker_side_precheck: true
+    default_policy: deny
+    default_publish_patterns:
+      - worker/{worker_id}/reply/#
+      - worker/{worker_id}/presence
+      - worker/{worker_id}/snapshot/#
+      - worker/{worker_id}/event/#
+    default_subscribe_patterns:
+      - worker/{worker_id}/command/+
+compatibility:
+  proxy_gateway_min_version: v01.8.6
+  legacy_event_input: true
+  default_enabled: true
+postgresql_scope:
+  worker_local_dependency: false
+  owner: external_product_proxy_gateway
+acceptance:
+  - bridge_disabled_must_not_change_runtime_core
+  - bridge_enabled_subscribes_to_worker_command_wildcard
+  - bridge_publishes_retained_presence
+  - bridge_replies_to_client_specific_reply_topic
+  - bridge_emits_v35_1_internal_command_event
+  - bridge_keeps_legacy_command_event_compatibility
+  - bridge_denies_topics_outside_worker_acl
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)

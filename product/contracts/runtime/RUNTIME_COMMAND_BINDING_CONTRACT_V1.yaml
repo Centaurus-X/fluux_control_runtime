@@ -2,8 +2,13 @@ contract_id: C26
 contract_name: RUNTIME_COMMAND_BINDING_CONTRACT_V1
 version: 1
 status: active
+<<<<<<< HEAD
 release: v34_preproduction_final_runtime
 event_type: V34_PROXY_RUNTIME_COMMAND_RECEIVED
+=======
+release: v35_1_preproduction_final_runtime
+event_type: V35_1_PROXY_RUNTIME_COMMAND_RECEIVED
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 event_target: thread_management
 safe_direct_io_write: false
 operations:

@@ -182,6 +182,85 @@ def _filter_table_rows(rows, controller_id):
     return result
 
 
+<<<<<<< HEAD
+=======
+def _collect_int_values_from_rows(rows, column_name):
+    """Return a deterministic set of int values from list rows."""
+    result = set()
+    if not isinstance(rows, (list, tuple)):
+        return result
+
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        value_int = _safe_int(row.get(column_name))
+        if value_int is not None:
+            result.add(value_int)
+    return result
+
+
+def _normalize_row_id_list(value):
+    """Normalize scalar/list id columns to a list of unique ints."""
+    if value is None:
+        return []
+    if not isinstance(value, (list, tuple, set)):
+        value = [value]
+
+    result = []
+    seen = set()
+    for item in value:
+        item_int = _safe_int(item)
+        if item_int is None or item_int in seen:
+            continue
+        seen.add(item_int)
+        result.append(item_int)
+    return result
+
+
+def _row_references_any_id(row, column_names, allowed_ids):
+    """Return True if a row references one of ``allowed_ids`` in any id column."""
+    if not isinstance(row, dict) or not allowed_ids:
+        return False
+
+    for column_name in column_names:
+        for item_int in _normalize_row_id_list(row.get(column_name)):
+            if item_int in allowed_ids:
+                return True
+    return False
+
+
+def _filter_process_state_rows(rows, controller_id, controller_sensor_ids, controller_actuator_ids):
+    """Filter process states by controller ownership and state dependencies.
+
+    Process-state rows often do not carry a direct ``controller_id``.  They are
+    nevertheless controller-relevant when their ``sensor_ids`` or
+    ``actuator_ids`` reference devices owned by the controller.  This is
+    important for deterministic PID/PI/PD liveness because controller workers
+    derive forced automation sensors from ``process_states``.
+    """
+    if not isinstance(rows, (list, tuple)):
+        return []
+
+    match_fn = partial(_row_matches_controller, controller_id=controller_id)
+    cross_fn = partial(_row_cross_domain_source, controller_id=controller_id)
+
+    result = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        if match_fn(row) or cross_fn(row):
+            result.append(row)
+            continue
+        if _row_references_any_id(row, ("sensor_ids", "sensor_id"), controller_sensor_ids):
+            result.append(row)
+            continue
+        if _row_references_any_id(row, ("actuator_ids", "actuator_id"), controller_actuator_ids):
+            result.append(row)
+            continue
+    return result
+
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 # ---------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------
@@ -225,7 +304,22 @@ def chunk_controller_config(master_config, controller_id):
 
     for table_name in CONTROLLER_SCOPED_TABLES:
         rows = master_config.get(table_name)
+<<<<<<< HEAD
         filtered = _filter_table_rows(rows, cid_int)
+=======
+        if table_name == "process_states":
+            controller_sensor_ids = _collect_int_values_from_rows(
+                controller_scoped.get("sensors"), "sensor_id"
+            )
+            controller_actuator_ids = _collect_int_values_from_rows(
+                controller_scoped.get("actuators"), "actuator_id"
+            )
+            filtered = _filter_process_state_rows(
+                rows, cid_int, controller_sensor_ids, controller_actuator_ids
+            )
+        else:
+            filtered = _filter_table_rows(rows, cid_int)
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         controller_scoped[table_name] = filtered
         table_counts[table_name] = len(filtered)
         total_rows += len(filtered)

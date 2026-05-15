@@ -2,8 +2,13 @@
 
 # src/core/proxy_worker_bridge.py
 #
+<<<<<<< HEAD
 # v33: Native Bruecke zwischen dem v31/v32 Worker und dem externen
 # MQTT/WebSocket Proxy-Gateway v01.7.
+=======
+# v35.1: Native Bruecke zwischen Runtime Worker und externem
+# MQTT/WebSocket Proxy-Gateway.
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 #
 # Rolle:
 #   * Der Worker bleibt lokale Runtime-Wahrheit.
@@ -60,10 +65,18 @@ DEFAULT_PRESENCE_INTERVAL_S = 30.0
 DEFAULT_OUTBOUND_QUEUE_TIMEOUT_S = 0.05
 DEFAULT_COMMAND_EVENT_TIMEOUT_S = 0.05
 DEFAULT_MAX_PAYLOAD_BYTES = 262144
+<<<<<<< HEAD
 BRIDGE_SOURCE = "v34_preproduction_final_runtime"
 RUNTIME_COMMAND_EVENT_TYPE = "V34_PROXY_RUNTIME_COMMAND_RECEIVED"
 LEGACY_RUNTIME_COMMAND_EVENT_TYPE = "V33_PROXY_WORKER_COMMAND_RECEIVED"
 PREVIOUS_RUNTIME_COMMAND_EVENT_TYPE = "V32_PROXY_WORKER_COMMAND_RECEIVED"
+=======
+BRIDGE_SOURCE = "v35_1_preproduction_final_runtime"
+RUNTIME_COMMAND_EVENT_TYPE = "V35_1_PROXY_RUNTIME_COMMAND_RECEIVED"
+LEGACY_RUNTIME_COMMAND_EVENT_TYPE = "V34_PROXY_RUNTIME_COMMAND_RECEIVED"
+PREVIOUS_RUNTIME_COMMAND_EVENT_TYPE = "V33_PROXY_WORKER_COMMAND_RECEIVED"
+OLDER_RUNTIME_COMMAND_EVENT_TYPE = "V32_PROXY_WORKER_COMMAND_RECEIVED"
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 RUNTIME_COMMAND_TARGET = "thread_management"
 
 
@@ -181,6 +194,140 @@ def _optional_existing_file(path_value: Any) -> str | None:
     return expanded
 
 
+<<<<<<< HEAD
+=======
+
+def _read_env_text(env_name: Any) -> str | None:
+    name = _normalize_optional_text(env_name)
+    if name is None:
+        return None
+    try:
+        return _normalize_optional_text(os.environ.get(name))
+    except Exception:
+        return None
+
+
+def _first_present_text(*values: Any) -> str | None:
+    for value in values:
+        text = _normalize_optional_text(value)
+        if text is not None:
+            return text
+    return None
+
+
+def _normalize_mtls_mode(value: Any, default: str = "optional") -> str:
+    text = _safe_str(value, default).strip().lower().replace("-", "_")
+    if text in ("required", "require", "strict", "mutual_tls", "mtls"):
+        return "required"
+    if text in ("disabled", "disable", "off", "false", "none", "no"):
+        return "disabled"
+    return "optional"
+
+
+def _normalize_acl_policy(value: Any, default: str = "deny") -> str:
+    text = _safe_str(value, default).strip().lower()
+    if text in ("allow", "permit", "accept"):
+        return "allow"
+    return "deny"
+
+
+def _normalize_text_sequence(value: Any) -> tuple[str, ...]:
+    if value is None:
+        return ()
+    if isinstance(value, str):
+        items = [item.strip() for item in value.replace(";", ",").split(",")]
+    elif isinstance(value, (list, tuple, set)):
+        items = list(value)
+    else:
+        items = [value]
+    result = []
+    for item in items:
+        text = _normalize_optional_text(item)
+        if text is not None:
+            result.append(text)
+    return tuple(result)
+
+
+def _expand_topic_pattern(pattern: Any, worker_id: Any) -> str | None:
+    text = _normalize_optional_text(pattern)
+    if text is None:
+        return None
+    worker = normalize_worker_id(worker_id)
+    try:
+        text = text.replace("{worker_id}", worker)
+    except Exception:
+        pass
+    if "%s" in text:
+        try:
+            text = text % worker
+        except Exception:
+            pass
+    return text.strip("/")
+
+
+def _default_publish_topic_patterns(worker_id: Any) -> tuple[str, ...]:
+    worker = normalize_worker_id(worker_id)
+    return (
+        "worker/%s/reply/#" % worker,
+        "worker/%s/presence" % worker,
+        "worker/%s/snapshot/#" % worker,
+        "worker/%s/event/#" % worker,
+    )
+
+
+def _default_subscribe_topic_patterns(worker_id: Any) -> tuple[str, ...]:
+    worker = normalize_worker_id(worker_id)
+    return ("worker/%s/command/+" % worker,)
+
+
+def _normalize_acl_topic_patterns(value: Any, worker_id: Any, defaults: tuple[str, ...]) -> tuple[str, ...]:
+    source = _normalize_text_sequence(value)
+    if not source:
+        source = defaults
+    result = []
+    for item in source:
+        expanded = _expand_topic_pattern(item, worker_id)
+        if expanded is not None:
+            result.append(expanded)
+    return tuple(result)
+
+
+def mqtt_topic_matches(pattern: Any, topic: Any) -> bool:
+    pattern_text = _normalize_optional_text(pattern)
+    topic_text = _normalize_optional_text(topic)
+    if pattern_text is None or topic_text is None:
+        return False
+    pattern_parts = pattern_text.strip("/").split("/") if pattern_text.strip("/") else []
+    topic_parts = topic_text.strip("/").split("/") if topic_text.strip("/") else []
+    index = 0
+    while index < len(pattern_parts):
+        pattern_part = pattern_parts[index]
+        if pattern_part == "#":
+            return index == len(pattern_parts) - 1
+        if index >= len(topic_parts):
+            return False
+        if pattern_part != "+" and pattern_part != topic_parts[index]:
+            return False
+        index += 1
+    return index == len(topic_parts)
+
+
+def topic_acl_allows(config: dict[str, Any], action: Any, topic: Any) -> bool:
+    cfg = config if isinstance(config, dict) else {}
+    if not _safe_bool(cfg.get("topic_acl_enforcement"), True):
+        return True
+    action_text = _safe_str(action, "").strip().lower()
+    if action_text == "subscribe":
+        patterns = cfg.get("allowed_subscribe_topics")
+    else:
+        patterns = cfg.get("allowed_publish_topics")
+    for pattern in _normalize_text_sequence(patterns):
+        if mqtt_topic_matches(pattern, topic):
+            return True
+    return _normalize_acl_policy(cfg.get("topic_acl_default_policy"), "deny") == "allow"
+
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 def _queue_put(queue_obj: Any, item: Any, timeout_s: float) -> bool:
     if queue_obj is None:
         return False
@@ -421,7 +568,11 @@ def _build_state_read_result(ctx: dict[str, Any], payload: dict[str, Any]) -> di
         "summary": _mapping_summary(resource_value),
         "runtime_view": {
             "bridge_enabled": True,
+<<<<<<< HEAD
             "binding_version": "v34",
+=======
+            "binding_version": BRIDGE_SOURCE,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         },
     }
     if key:
@@ -605,6 +756,10 @@ def build_bridge_config(settings: dict[str, Any] | None, runtime_bundle: dict[st
     proxy_cfg = settings.get("proxy_worker_bridge") if isinstance(settings.get("proxy_worker_bridge"), dict) else {}
     mqtt_cfg = settings.get("mqtt_client") if isinstance(settings.get("mqtt_client"), dict) else {}
 
+<<<<<<< HEAD
+=======
+    worker_id = normalize_worker_id(proxy_cfg.get("worker_id") or settings.get("node_id") or DEFAULT_WORKER_ID)
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     broker_host = proxy_cfg.get("broker_host") or mqtt_cfg.get("broker_host") or mqtt_cfg.get("broker_ip")
     broker_port = proxy_cfg.get("broker_port") or mqtt_cfg.get("broker_port") or DEFAULT_BROKER_PORT
     secure_port = proxy_cfg.get("secure_port") or proxy_cfg.get("broker_secure_port") or DEFAULT_BROKER_SECURE_PORT
@@ -617,6 +772,7 @@ def build_bridge_config(settings: dict[str, Any] | None, runtime_bundle: dict[st
         or None
     )
 
+<<<<<<< HEAD
     # mTLS is optional. Generic MQTT ssl_certfile/ssl_keyfile values are not
     # inherited here because they may be placeholder paths from the legacy MQTT
     # service. Only explicit proxy_worker_bridge client cert/key values are used.
@@ -629,6 +785,43 @@ def build_bridge_config(settings: dict[str, Any] | None, runtime_bundle: dict[st
         "enabled": _safe_bool(proxy_cfg.get("enabled"), False),
         "contract_id": _safe_str(proxy_cfg.get("contract_id"), "C25"),
         "worker_id": normalize_worker_id(proxy_cfg.get("worker_id") or settings.get("node_id") or DEFAULT_WORKER_ID),
+=======
+    # mTLS is configurable but not forced. Generic MQTT cert/key values are not
+    # inherited automatically because they often point to placeholder files.
+    client_cert_file = proxy_cfg.get("client_cert_file")
+    client_key_file = proxy_cfg.get("client_key_file")
+    mtls_mode = _normalize_mtls_mode(proxy_cfg.get("mtls_mode"), "optional")
+
+    username = _first_present_text(
+        proxy_cfg.get("username"),
+        _read_env_text(proxy_cfg.get("username_env")),
+        mqtt_cfg.get("username"),
+        _read_env_text(mqtt_cfg.get("username_env")),
+    )
+    password = _first_present_text(
+        proxy_cfg.get("password"),
+        _read_env_text(proxy_cfg.get("password_env")),
+        mqtt_cfg.get("password"),
+        _read_env_text(mqtt_cfg.get("password_env")),
+    )
+
+    resolved_port = _safe_int(secure_port if use_mqtts else broker_port, DEFAULT_BROKER_SECURE_PORT if use_mqtts else DEFAULT_BROKER_PORT)
+    allowed_publish_topics = _normalize_acl_topic_patterns(
+        proxy_cfg.get("allowed_publish_topics"),
+        worker_id,
+        _default_publish_topic_patterns(worker_id),
+    )
+    allowed_subscribe_topics = _normalize_acl_topic_patterns(
+        proxy_cfg.get("allowed_subscribe_topics"),
+        worker_id,
+        _default_subscribe_topic_patterns(worker_id),
+    )
+
+    return {
+        "enabled": _safe_bool(proxy_cfg.get("enabled"), False),
+        "contract_id": _safe_str(proxy_cfg.get("contract_id"), "C27"),
+        "worker_id": worker_id,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "broker_host": _safe_str(broker_host, DEFAULT_BROKER_HOST),
         "broker_port": _safe_int(broker_port, DEFAULT_BROKER_PORT),
         "secure_port": _safe_int(secure_port, DEFAULT_BROKER_SECURE_PORT),
@@ -640,9 +833,21 @@ def build_bridge_config(settings: dict[str, Any] | None, runtime_bundle: dict[st
         "tls_ciphers": _normalize_optional_text(proxy_cfg.get("tls_ciphers") or proxy_cfg.get("ciphers")),
         "tls_allow_insecure": _safe_bool(proxy_cfg.get("tls_allow_insecure"), False),
         "check_hostname": _safe_bool(proxy_cfg.get("check_hostname"), True),
+<<<<<<< HEAD
         "username": _normalize_optional_text(proxy_cfg.get("username") or mqtt_cfg.get("username")),
         "password": _normalize_optional_text(proxy_cfg.get("password") or mqtt_cfg.get("password")),
         "client_id": _safe_str(proxy_cfg.get("client_id"), "v32-worker-%s" % normalize_worker_id(proxy_cfg.get("worker_id") or settings.get("node_id") or DEFAULT_WORKER_ID)),
+=======
+        "mtls_mode": mtls_mode,
+        "certificate_rotation_enabled": _safe_bool(proxy_cfg.get("certificate_rotation_enabled"), False),
+        "certificate_renew_before_days": _safe_int(proxy_cfg.get("certificate_renew_before_days"), 30),
+        "authentication_required": _safe_bool(proxy_cfg.get("authentication_required"), False),
+        "username": username,
+        "password": password,
+        "username_env": _normalize_optional_text(proxy_cfg.get("username_env")),
+        "password_env": _normalize_optional_text(proxy_cfg.get("password_env")),
+        "client_id": _safe_str(proxy_cfg.get("client_id"), "v35-1-worker-%s" % worker_id),
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "keepalive": _safe_int(proxy_cfg.get("keepalive"), DEFAULT_KEEPALIVE),
         "command_qos": _safe_int(proxy_cfg.get("command_qos"), DEFAULT_COMMAND_QOS),
         "reply_qos": _safe_int(proxy_cfg.get("reply_qos"), DEFAULT_REPLY_QOS),
@@ -653,10 +858,24 @@ def build_bridge_config(settings: dict[str, Any] | None, runtime_bundle: dict[st
         "auto_reply_enabled": _safe_bool(proxy_cfg.get("auto_reply_enabled"), True),
         "emit_command_events": _safe_bool(proxy_cfg.get("emit_command_events"), True),
         "snapshot_enabled": _safe_bool(proxy_cfg.get("snapshot_enabled"), True),
+<<<<<<< HEAD
         "max_payload_bytes": _safe_int(proxy_cfg.get("max_payload_bytes"), DEFAULT_MAX_PAYLOAD_BYTES),
     }
 
 
+=======
+        "runtime_binding_enabled": _safe_bool(proxy_cfg.get("runtime_binding_enabled"), True),
+        "runtime_event_target": _safe_str(proxy_cfg.get("runtime_event_target"), RUNTIME_COMMAND_TARGET),
+        "runtime_state_resource": _safe_str(proxy_cfg.get("runtime_state_resource"), "proxy_runtime_command_state"),
+        "runtime_command_binding_version": _safe_str(proxy_cfg.get("runtime_command_binding_version"), BRIDGE_SOURCE),
+        "topic_acl_enforcement": _safe_bool(proxy_cfg.get("topic_acl_enforcement"), True),
+        "topic_acl_default_policy": _normalize_acl_policy(proxy_cfg.get("topic_acl_default_policy"), "deny"),
+        "allowed_publish_topics": allowed_publish_topics,
+        "allowed_subscribe_topics": allowed_subscribe_topics,
+        "max_payload_bytes": _safe_int(proxy_cfg.get("max_payload_bytes"), DEFAULT_MAX_PAYLOAD_BYTES),
+    }
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 def get_effective_broker_port(config: dict[str, Any]) -> int:
     if _safe_bool(config.get("use_mqtts"), False):
         return _safe_int(config.get("secure_port") or config.get("effective_port"), DEFAULT_BROKER_SECURE_PORT)
@@ -676,6 +895,10 @@ def _require_mqtt_module() -> Any:
 
 def build_tls_arguments(config: dict[str, Any]) -> dict[str, Any]:
     allow_insecure = _safe_bool(config.get("tls_allow_insecure"), False)
+<<<<<<< HEAD
+=======
+    mtls_mode = _normalize_mtls_mode(config.get("mtls_mode"), "optional")
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     ca_file = _normalize_optional_text(config.get("ca_cert_file"))
     client_cert_file = _normalize_optional_text(config.get("client_cert_file"))
     client_key_file = _normalize_optional_text(config.get("client_key_file"))
@@ -686,9 +909,23 @@ def build_tls_arguments(config: dict[str, Any]) -> dict[str, Any]:
             raise FileNotFoundError("proxy_worker_bridge ca_cert_file not found: %s" % ca_file)
         ca_file = None
 
+<<<<<<< HEAD
     # Optional mTLS: pass cert/key only when both files exist. A missing optional
     # client certificate must never crash the bridge in one-way TLS mode.
     if not (_is_existing_file(client_cert_file) and _is_existing_file(client_key_file)):
+=======
+    if mtls_mode == "disabled":
+        client_cert_file = None
+        client_key_file = None
+    elif mtls_mode == "required":
+        if not _is_existing_file(client_cert_file):
+            raise FileNotFoundError("proxy_worker_bridge required client_cert_file not found: %s" % client_cert_file)
+        if not _is_existing_file(client_key_file):
+            raise FileNotFoundError("proxy_worker_bridge required client_key_file not found: %s" % client_key_file)
+    elif not (_is_existing_file(client_cert_file) and _is_existing_file(client_key_file)):
+        # Optional mTLS: pass cert/key only when both files exist. A missing
+        # optional client certificate must never crash one-way TLS operation.
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         client_cert_file = None
         client_key_file = None
 
@@ -708,7 +945,10 @@ def build_tls_arguments(config: dict[str, Any]) -> dict[str, Any]:
         cleaned[key] = value
     return cleaned
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 def configure_client_tls(client_obj: Any, config: dict[str, Any]) -> bool:
     if not _safe_bool(config.get("use_mqtts"), False):
         return False
@@ -729,8 +969,15 @@ def create_mqtt_client(config: dict[str, Any], ctx: dict[str, Any]) -> Any:
         client_obj = module_obj.Client(_safe_str(config.get("client_id"), ""), protocol=protocol)
 
     client_obj.user_data_set(ctx)
+<<<<<<< HEAD
     username = config.get("username")
     password = config.get("password")
+=======
+    username = _normalize_optional_text(config.get("username"))
+    password = config.get("password")
+    if _safe_bool(config.get("authentication_required"), False) and username is None:
+        raise RuntimeError("proxy_worker_bridge authentication_required=true but no username is configured")
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     if username:
         client_obj.username_pw_set(username, password=password)
 
@@ -790,6 +1037,11 @@ def build_bridge_ctx(
             "events_published": 0,
             "queue_emits": 0,
             "publish_errors": 0,
+<<<<<<< HEAD
+=======
+            "publish_topic_acl_denies": 0,
+            "subscribe_topic_acl_denies": 0,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
             "last_error": None,
         },
         "shutdown_event": shutdown_event,
@@ -824,11 +1076,24 @@ def _metric_set(ctx: dict[str, Any], key: str, value: Any) -> None:
 
 
 def publish_proxy_envelope(ctx: dict[str, Any], topic: str, envelope: dict[str, Any], qos: int, retain: bool) -> bool:
+<<<<<<< HEAD
+=======
+    cfg = ctx.get("cfg", {}) if isinstance(ctx.get("cfg"), dict) else {}
+    if not topic_acl_allows(cfg, "publish", topic):
+        _metric_inc(ctx, "publish_topic_acl_denies")
+        _metric_inc(ctx, "publish_errors")
+        _metric_set(ctx, "last_error", "publish_topic_acl_denied:%s" % _safe_str(topic, ""))
+        return False
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     client_obj = ctx.get("runtime", {}).get("client_obj")
     if client_obj is None:
         _metric_inc(ctx, "publish_errors")
         return False
+<<<<<<< HEAD
     if not _payload_size_ok(envelope, _safe_int(ctx.get("cfg", {}).get("max_payload_bytes"), DEFAULT_MAX_PAYLOAD_BYTES)):
+=======
+    if not _payload_size_ok(envelope, _safe_int(cfg.get("max_payload_bytes"), DEFAULT_MAX_PAYLOAD_BYTES)):
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         _metric_inc(ctx, "publish_errors")
         _metric_set(ctx, "last_error", "publish_payload_exceeds_max_payload_bytes")
         return False
@@ -844,15 +1109,23 @@ def publish_proxy_envelope(ctx: dict[str, Any], topic: str, envelope: dict[str, 
     except Exception:
         return False
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 def publish_presence(ctx: dict[str, Any], status: str = "online") -> bool:
     cfg = ctx.get("cfg", {})
     worker_id = cfg.get("worker_id")
     payload = {
         "status": _safe_str(status, "online"),
         "worker_id": worker_id,
+<<<<<<< HEAD
         "runtime_version": "v34_preproduction_final_runtime",
         "capabilities": ["runtime", "events", "commands", "snapshots", "proxy-envelope-v1", "v33-runtime-command-binding"],
+=======
+        "runtime_version": BRIDGE_SOURCE,
+        "capabilities": ["runtime", "events", "commands", "snapshots", "proxy-envelope-v1", "v35_1-runtime-command-binding"],
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "bridge": BRIDGE_SOURCE,
     }
     envelope = build_proxy_envelope(
@@ -888,6 +1161,15 @@ def _emit_command_event(ctx: dict[str, Any], topic_info: dict[str, Any], envelop
         "event_type": RUNTIME_COMMAND_EVENT_TYPE,
         "legacy_event_type": LEGACY_RUNTIME_COMMAND_EVENT_TYPE,
         "previous_event_type": PREVIOUS_RUNTIME_COMMAND_EVENT_TYPE,
+<<<<<<< HEAD
+=======
+        "accepted_event_types": (
+            RUNTIME_COMMAND_EVENT_TYPE,
+            LEGACY_RUNTIME_COMMAND_EVENT_TYPE,
+            PREVIOUS_RUNTIME_COMMAND_EVENT_TYPE,
+            OLDER_RUNTIME_COMMAND_EVENT_TYPE,
+        ),
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "target": RUNTIME_COMMAND_TARGET,
         "message_type": RUNTIME_COMMAND_TARGET,
         "_source": BRIDGE_SOURCE,
@@ -900,8 +1182,13 @@ def _emit_command_event(ctx: dict[str, Any], topic_info: dict[str, Any], envelop
         "payload": _deepcopy_safe(payload),
         "envelope": _deepcopy_safe(envelope),
         "runtime_binding": {
+<<<<<<< HEAD
             "version": "v34",
             "mode": "v34_preproduction_final_runtime",
+=======
+            "version": "v35.1",
+            "mode": BRIDGE_SOURCE,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
             "safe_direct_io_write": False,
         },
     }
@@ -1045,6 +1332,15 @@ def build_runtime_command_reply_payload(ctx: dict[str, Any], envelope: dict[str,
         "event_type": RUNTIME_COMMAND_EVENT_TYPE,
         "legacy_event_type": LEGACY_RUNTIME_COMMAND_EVENT_TYPE,
         "previous_event_type": PREVIOUS_RUNTIME_COMMAND_EVENT_TYPE,
+<<<<<<< HEAD
+=======
+        "accepted_event_types": (
+            RUNTIME_COMMAND_EVENT_TYPE,
+            LEGACY_RUNTIME_COMMAND_EVENT_TYPE,
+            PREVIOUS_RUNTIME_COMMAND_EVENT_TYPE,
+            OLDER_RUNTIME_COMMAND_EVENT_TYPE,
+        ),
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
         "target": RUNTIME_COMMAND_TARGET,
         "worker_id": topic_info.get("worker_id") or ctx.get("cfg", {}).get("worker_id"),
         "domain": domain,
@@ -1063,7 +1359,11 @@ def build_runtime_command_reply_payload(ctx: dict[str, Any], envelope: dict[str,
         )
     else:
         result = _handle_safe_runtime_command(ctx, payload, operation)
+<<<<<<< HEAD
         result.setdefault("binding_version", "v34_preproduction_final_runtime")
+=======
+        result.setdefault("binding_version", BRIDGE_SOURCE)
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     base_payload = {
         "status": result.get("status", "accepted"),
         "worker_id": ctx.get("cfg", {}).get("worker_id"),
@@ -1072,8 +1372,13 @@ def build_runtime_command_reply_payload(ctx: dict[str, Any], envelope: dict[str,
         "received_payload": _deepcopy_safe(payload),
         "bridge": BRIDGE_SOURCE,
         "runtime_binding": {
+<<<<<<< HEAD
             "version": "v34",
             "mode": "preproduction_final_runtime_binding",
+=======
+            "version": "v35.1",
+            "mode": BRIDGE_SOURCE,
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
             "event_type": RUNTIME_COMMAND_EVENT_TYPE,
             "legacy_event_type": LEGACY_RUNTIME_COMMAND_EVENT_TYPE,
             "target": RUNTIME_COMMAND_TARGET,
@@ -1240,10 +1545,22 @@ def _on_connect(client_obj: Any, userdata: Any, flags: Any, reason_code: Any, pr
     cfg = ctx.get("cfg", {})
     ctx.get("runtime", {}).get("connected", threading.Event()).set()
     _metric_inc(ctx, "connects")
+<<<<<<< HEAD
     try:
         client_obj.subscribe(make_proxy_command_wildcard(cfg.get("worker_id")), qos=_safe_int(cfg.get("command_qos"), DEFAULT_COMMAND_QOS))
     except Exception as exc:
         _metric_set(ctx, "last_error", "subscribe_failed:%s" % exc)
+=======
+    subscribe_topic = make_proxy_command_wildcard(cfg.get("worker_id"))
+    if not topic_acl_allows(cfg, "subscribe", subscribe_topic):
+        _metric_inc(ctx, "subscribe_topic_acl_denies")
+        _metric_set(ctx, "last_error", "subscribe_topic_acl_denied:%s" % subscribe_topic)
+    else:
+        try:
+            client_obj.subscribe(subscribe_topic, qos=_safe_int(cfg.get("command_qos"), DEFAULT_COMMAND_QOS))
+        except Exception as exc:
+            _metric_set(ctx, "last_error", "subscribe_failed:%s" % exc)
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     publish_presence(ctx, "online")
     logger = ctx.get("logger")
     if logger is not None:

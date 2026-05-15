@@ -1,7 +1,11 @@
 contract_id: C27
 name: Runtime Command Activation Binding Contract V1
 version: v1
+<<<<<<< HEAD
 release_target: v34_preproduction_final_runtime
+=======
+release_target: v35_1_preproduction_final_runtime
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 status: active
 scope:
   - proxy_worker_bridge_command_binding
@@ -25,8 +29,14 @@ commands:
     effect: append_safe_runtime_command_queue
     direct_io_write: false
 events:
+<<<<<<< HEAD
   command_event_type: V34_PROXY_RUNTIME_COMMAND_RECEIVED
   legacy_event_types:
+=======
+  command_event_type: V35_1_PROXY_RUNTIME_COMMAND_RECEIVED
+  legacy_event_types:
+    - V34_PROXY_RUNTIME_COMMAND_RECEIVED
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     - V33_PROXY_WORKER_COMMAND_RECEIVED
     - V32_PROXY_WORKER_COMMAND_RECEIVED
 routing:

@@ -42,11 +42,16 @@ Required later:
 - Add negative ACL tests.
 ```
 
+<<<<<<< HEAD
 ## 3. PostgreSQL backup and restore
+=======
+## 3. PostgreSQL backup and restore scope
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 
 Current state:
 
 ```text
+<<<<<<< HEAD
 PostgreSQL registry/auth/audit works.
 ```
 
@@ -60,6 +65,30 @@ Required later:
 - Add point-in-time recovery decision if needed.
 ```
 
+=======
+Runtime Worker v35.1 has no local PostgreSQL dependency.
+The worker uses JSON configuration, memory state, queues, MQTT/MQTTS transport, local logging and local health snapshots.
+PostgreSQL registry/auth/audit is a Product Proxy Gateway responsibility.
+```
+
+Required later for the Gateway/Proxy deployment only:
+
+```text
+- Define Gateway/Proxy PostgreSQL backup schedule.
+- Define Gateway/Proxy PostgreSQL retention policy.
+- Add Gateway/Proxy restore test script.
+- Add Gateway/Proxy schema migration rollback guidance.
+- Add point-in-time recovery decision if needed.
+```
+
+Runtime Worker action:
+
+```text
+No PostgreSQL patch is required on the worker side.
+Do not add database coupling to the runtime worker unless a later architecture decision explicitly requires it.
+```
+
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 ## 4. Monitoring and alerting
 
 Current state:
@@ -73,7 +102,11 @@ Required later:
 ```text
 - Monitor proxy health.
 - Monitor EMQX health and listener status.
+<<<<<<< HEAD
 - Monitor PostgreSQL health.
+=======
+- Monitor Gateway/Proxy PostgreSQL health only in the Gateway/Proxy deployment.
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 - Monitor runtime systemd service state.
 - Monitor worker presence freshness.
 - Alert on stale worker, stale proxy, failed client E2E smoke test, and certificate expiry.

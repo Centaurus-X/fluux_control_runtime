@@ -2,7 +2,11 @@
 
 # src/core/_runtime_command_binding.py
 #
+<<<<<<< HEAD
 # v34 pre-production final runtime command binding.
+=======
+# v35.1 pre-production final runtime command binding.
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 #
 # Rolle:
 #   * sichere, deterministische Runtime-Anbindung fuer Proxy-Worker-Commands
@@ -19,9 +23,16 @@ import uuid
 from typing import Any
 
 
+<<<<<<< HEAD
 BINDING_VERSION = "v34_preproduction_final_runtime"
 COMMAND_EVENT_TYPE = "V34_PROXY_RUNTIME_COMMAND_RECEIVED"
 LEGACY_COMMAND_EVENT_TYPES = (
+=======
+BINDING_VERSION = "v35_1_preproduction_final_runtime"
+COMMAND_EVENT_TYPE = "V35_1_PROXY_RUNTIME_COMMAND_RECEIVED"
+LEGACY_COMMAND_EVENT_TYPES = (
+    "V34_PROXY_RUNTIME_COMMAND_RECEIVED",
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
     "V33_PROXY_WORKER_COMMAND_RECEIVED",
     "V32_PROXY_WORKER_COMMAND_RECEIVED",
 )

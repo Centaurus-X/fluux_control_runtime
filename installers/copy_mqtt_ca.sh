@@ -2,7 +2,11 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+<<<<<<< HEAD
 RUNTIME_ROOT="${RUNTIME_ROOT:-/opt/projektstand_v34_3_preproduction_final_runtime}"
+=======
+RUNTIME_ROOT="${RUNTIME_ROOT:-/opt/projektstand_v35_1_preproduction_final_runtime}"
+>>>>>>> 862ba86 (Release runtime v35.1 preproduction final with PID liveness hotfix)
 MQTT_HOST="${MQTT_HOST:-192.168.0.31}"
 MQTT_USER="${MQTT_USER:-${USER}}"
 PROXY_RELEASE_ROOT="${PROXY_RELEASE_ROOT:-/opt/product_proxy_gateway_v01_8_6}"
